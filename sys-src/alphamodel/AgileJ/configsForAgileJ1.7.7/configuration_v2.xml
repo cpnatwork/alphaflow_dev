@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AgileJConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="configuration.xsd">
+
+    <DiagramStyle description="CPN Style" name="cpnDefaultStyle" superStyle="defaultDiagramStyle">
+        <TypeBinding typeSelector="javaRuntime"/>
+        <TypeBinding typeSelector="allUnitTests"/>
+        <TypeBinding typeSelector="allJAXBObjectFactories"/>
+        <TypeBinding typeSelector="innerClasses"/>
+        <TypeBinding typeSelector="protectedTypes"/>
+        <TypeBinding typeSelector="privateTypes"/>
+        <TypeBinding typeSelector="packageDefaultTypes"/>
+        <MethodBinding methodSelector="getterMethods"/>
+        <MethodBinding methodSelector="setterMethods"/>
+        <MethodBinding methodSelector="overridingMethods"/>
+        <MethodBinding methodSelector="onlyContructorMethods"/>
+        <MethodBinding methodSelector="equalsMethod"/>
+        <MethodBinding methodSelector="getterMethodsOfBoolean"/>
+        <MethodBinding methodSelector="protectedMethods"/>
+        <MethodBinding methodSelector="privateMethods"/>
+        <FieldBinding fieldSelector="allLoggerFields"/>
+        <!-- <FieldBinding fieldSelector="protectedFields"/> -->
+        <FieldBinding fieldSelector="privateFields"/>
+        <FieldBinding fieldSelector="packageDefaultFields"/>
+        <DependencyLineBinding fromSelector="allTypes" toSelector="allTypes" />
+    </DiagramStyle>
+
+    <TypeSelector description="all Types ending on Test" name="allUnitTests">
+        <TypesCriterion namePattern="*Test"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all JAXB ObjectFactory types" name="allJAXBObjectFactories">
+        <TypesCriterion namePattern="ObjectFactory"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all Logger types" name="defaultLoggerTypes" stereotype="Logger">
+        <TypesCriterion namePattern="Logger"/>
+    </TypeSelector>
+
+    <FieldSelector name="allLoggerFields" description="all Logger types" >
+        <FieldsCriterion typeSelector="defaultLoggerTypes"/>
+    </FieldSelector>
+    
+    <MethodSelector name="equalsMethod" description="the equals">
+        <MethodsCriterion namePattern="equals"/>
+    </MethodSelector>
+  
+    <TypeSelector description="Just boolean itself" name="booleanType">
+        <TypesCriterion namePattern="boolean"/>
+    </TypeSelector>
+
+    <MethodSelector name="getterMethodsOfBoolean" description="the getter of boolean type">
+        <MethodsCriterion namePattern="is*" typeSelector="booleanType"/>
+    </MethodSelector>
+
+
+	<!-- This file can be edited to change the configuration of AgileJ StructureViews -->
+    <!-- Note that AgileJ StructureViews needs to be told to load its configuration from this file -->
+    <!-- Right click on this file in the package explorer and select AgileJ - Use as Configuration -->
+    
+    <TypeSelector description="all abstract classes" name="abstractTypes" stereotype="abstract">
+        <TypesCriterion>
+            <Modifier value="abstract"/>
+        </TypesCriterion>
+    </TypeSelector>
+    
+    <TypeSelector description="all types excluding interfaces" name="allClasses">
+        <TypesCriterion excludedOtherSelector="allInterfaces"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all types which are interfaces" interfaces="true" name="allInterfaces">
+        <TypesCriterion namePattern="*"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all non-inner classes and interfaces" name="allTopLevelTypes">
+        <TypesCriterion topLevel="true"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all types except Object and inners" name="allTopLevelTypesButObject">
+        <TypesCriterion includedOtherSelector="allTopLevelTypes"/>
+        <TypesCriterion excludedOtherSelector="justObject"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all types, no filtering" name="allTypes">
+        <TypesCriterion namePattern="*"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all bytecode types" name="bytecodeTypes" stereotype="bytecode">
+        <TypesCriterion bytecode="true"/>
+    </TypeSelector>
+    
+    <TypeSelector description="select classes derived from a class in package matching pattern switch" name="childOfTypesInMatchingPackage">
+        <TypesCriterion superselector="typesInMatchingPackage"/>
+    </TypeSelector>
+    
+    <TypeSelector description="select classes which depend upon types whose package matches a pattern" name="dependUponTypesInMatchingPackage">
+        <TypesCriterion dependingUpon="typesInMatchingPackage"/>
+    </TypeSelector>
+    
+    <TypeSelector description="class which inherit from Exception" name="exceptionTypes" stereotype="exception">
+        <TypesCriterion superselector="justException"/>
+    </TypeSelector>
+    
+    <TypeSelector description="inner classes and interfaces" name="innerClasses">
+        <TypesCriterion excludedOtherSelector="allTopLevelTypes"/>
+    </TypeSelector>
+    
+    <TypeSelector description="all interfaces" interfaces="true" name="interfaceTypes" stereotype="interface">
+        <TypesCriterion namePattern="*"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all types in java.* and javax.* packages" name="javaRuntime" stereotype="JRE">
+        <TypesCriterion bytecode="true"/>
+        <TypesCriterion packagePattern="java*"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="just Exception itself" name="justException">
+        <TypesCriterion qualifiedName="java.lang.Exception"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="just java.lang.Object" name="justObject">
+        <TypesCriterion qualifiedName="java.lang.Object"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="just Serializable itself" name="justSerializable">
+        <TypesCriterion qualifiedName="java.io.Serializable"/>
+    </TypeSelector>
+    
+    <TypeSelector description="types whose name matches a pattern" name="matchPatternTypes">
+        <TypesCriterion namePatternSwitch="namePatternSwitch"/>
+    </TypeSelector>
+    
+    <TypeSelector description="selects all @generated classes" name="generatedTypes" stereotype="generated">
+        <TypesCriterion>
+        	<Javadoc name="@generated"/>
+        </TypesCriterion>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="types matching @author pattern" name="matchingAuthorPattern">
+        <TypesCriterion>
+        	<Javadoc name="@author" valuePatternSwitch="authorPattern"/>
+            <Modifier value="fred"/>
+            <Modifier value="fred"/>
+        </TypesCriterion>
+    </TypeSelector>
+
+    <TypeSelector description="types with filtered name" name="nameSwitchedTypes">
+        <TypesCriterion namePatternSwitch="namePatternSwitch"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all types with visibility package - default " name="packageDefaultTypes">
+        <TypesCriterion excludedOtherSelector="publicTypes"/>
+        <TypesCriterion excludedOtherSelector="protectedTypes"/>
+        <TypesCriterion excludedOtherSelector="privateTypes"/>
+        <TypesCriterion/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all types with visibility 'private' " name="privateTypes">
+        <TypesCriterion>
+            <Modifier value="private"/>
+        </TypesCriterion>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all inner types with visibility 'public' " name="publicTypes">
+        <TypesCriterion>
+            <Modifier value="public"/>
+        </TypesCriterion>
+    </TypeSelector>
+    
+    <TypeSelector description="selects classes with references to self" name="referenceToSelfTypes">
+        <TypesCriterion declares="referencingOwner"/>
+    </TypeSelector>
+    
+    <TypeSelector description="serializable types" name="serializableTypes" stereotype="serializable">
+        <TypesCriterion superselector="justSerializable"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="source code types without an @generated tag" name="handWrittenTypes" stereotype="by hand">
+        <TypesCriterion excludedOtherSelector="generatedTypes"/>
+        <TypesCriterion includedOtherSelector="sourceTypes"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all types with visibility 'protected' " name="protectedTypes">
+        <TypesCriterion>
+            <Modifier value="protected"/>
+        </TypesCriterion>
+        <TypesCriterion/>
+    </TypeSelector>
+    
+    <TypeSelector description="types for which the source code is available" name="sourceTypes">
+        <TypesCriterion bytecode="false"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="non-inner types for which the source code is available" name="topLevelSourceTypes">
+        <TypesCriterion bytecode="false"/>
+        <TypesCriterion topLevel="true"/>
+    </TypeSelector>
+    
+    <TypeSelector description="select classes in package matching pattern switch" name="typesInMatchingPackage">
+        <TypesCriterion packagePatternSwitch="namePatternSwitch"/>
+    </TypeSelector>
+    
+    <TypeSelector description="deprecated types" name="deprecatedTypes">
+    	<TypesCriterion>
+    		<Javadoc name="deprecated"/>
+    	</TypesCriterion>
+    	<TypesCriterion>
+    		<Annotation name="Deprecated"/>
+    	</TypesCriterion>
+    </TypeSelector>
+    
+    <TypeSelector description="a list of types to exclude from batch diagrams" name="stopTypes">
+    	<TypesCriterion packagePattern="java.lang*"/>
+    	<TypesCriterion packagePattern="java.util*"/>
+    	<TypesCriterion packagePattern="java.io*"/>
+    </TypeSelector>
+    
+    <TypeSelector criteriaAnded="true" description="all types which are not stop types and should not be excluded from batch" name="defaultBatchPopulationTypes">
+    	<TypesCriterion excludedOtherSelector="stopTypes"/>
+    	<TypesCriterion bytecode="false"/>
+    </TypeSelector>
+    
+    <TypeSelector description="types which declare one or more methods" name="typesDeclaringOrInheritingMethods">
+    	<TypesCriterion declares="allMethods"/>
+    	<TypesCriterion superselector="typesDeclaringOrInheritingMethods"/>
+    </TypeSelector>
+
+	<TypeSelector description="interfaces which neither declare nor inherit any methods" name="markerInterfaces" interfaces="true">
+		<TypesCriterion excludedOtherSelector="typesDeclaringOrInheritingMethods"/>
+	</TypeSelector>
+	
+	<TypeSelector description="types configured for use with the Spring framework" name="springTypes" stereotype="spring">
+		<TypesCriterion>
+			<Annotation name="Autowired"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Configurable"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Order"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Qualifier"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Scope"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Component"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Controller"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Repository"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="Service"/>
+		</TypesCriterion>
+	</TypeSelector>
+	
+	<TypeSelector description="JMX annotated types" name="jmxTypes" stereotype="JMX">
+		<TypesCriterion>
+			<Annotation name="ManagedNotification"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="ManagedNotifications"/>
+		</TypesCriterion>
+		<TypesCriterion>
+			<Annotation name="ManagedResource"/>
+		</TypesCriterion>
+	</TypeSelector>
+	
+	<TypeSelector description="AspectJ types" name="aspectJTypes" stereotype="AspectJ">
+		<TypesCriterion>
+			<Annotation name="Aspect"/>
+		</TypesCriterion>
+	</TypeSelector>
+	
+	<TypeSelector description="Just TestCase" name="justTestCase" criteriaAnded="true">
+		<TypesCriterion namePattern="TestCase"/>
+		<TypesCriterion packagePattern="junit.framework"/>
+	</TypeSelector>
+	
+	<TypeSelector description="JUnit 3 tests" name="junit3types" stereotype="JUnit Test" criteriaAnded="true">
+		<TypesCriterion namePattern="Test*"/>
+		<TypesCriterion>
+			<Modifier value="public"/>
+		</TypesCriterion>
+		<TypesCriterion superselector="justTestCase"/>
+	</TypeSelector>
+    
+    <TypeSelector description="all inner types modified as static" name="staticInnerTypes" criteriaAnded="true">
+    	<TypesCriterion topLevel="false"/>
+    	<TypesCriterion>
+    		<Modifier value="static"/>
+    	</TypesCriterion>
+    </TypeSelector>
+    
+    <TypeSelector description="types with one or more static members" name="hasStaticMembers">
+    	<TypesCriterion declares="staticInnerTypes"/>
+    	<TypesCriterion declares="staticFields"/>
+    	<TypesCriterion declares="staticMethods"/>
+    </TypeSelector>
+    
+    <MethodSelector name="allMethods" description="all methods, no filtering">
+        <MethodsCriterion namePattern="*"/>
+    </MethodSelector>
+    
+    <MethodSelector name="getterMethods" description="methods whose name starts with 'get'">
+        <MethodsCriterion namePattern="get*"/>
+    </MethodSelector>
+    
+    <MethodSelector name="matchNamePatternMethods" description="methods whose name matches a supplied name pattern">
+        <MethodsCriterion namePatternSwitch="namePatternSwitch"/>
+    </MethodSelector>
+    
+    <MethodSelector constructors="true" name="onlyContructorMethods" description="constructors only, no other methods">
+        <MethodsCriterion namePattern="*"/>
+    </MethodSelector>
+    
+    <MethodSelector name="overridingMethods" description="methods which override another method higher up the hierarchy">
+        <MethodsCriterion overriding="true"/>
+    </MethodSelector>
+    
+    <MethodSelector criteriaAnded="true" name="packageDefaultMethods" description="methods which have default visibility, ie package level">
+        <MethodsCriterion excludedOtherSelector="publicMethods"/>
+        <MethodsCriterion excludedOtherSelector="protectedMethods"/>
+        <MethodsCriterion excludedOtherSelector="privateMethods"/>
+    </MethodSelector>
+
+    <MethodSelector name="privateMethods" description="methods with private visibility">
+        <MethodsCriterion>
+            <Modifier value="private"/>
+        </MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="protectedMethods" description="methods with protected visibility">
+        <MethodsCriterion>
+            <Modifier value="protected"/>
+        </MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="publicMethods" description="methods with public visibility">
+        <MethodsCriterion>
+            <Modifier value="public"/>
+        </MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="setterMethods" description="methods whose name starts with 'set'">
+        <MethodsCriterion namePattern="set*"/>
+    </MethodSelector>
+    
+    <MethodSelector name="staticMethods" description="methods which are static (as opposed to instance methods)">
+        <MethodsCriterion>
+            <Modifier value="static"/>
+        </MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="synchronizedMethods" description="methods which are synchronized">
+        <MethodsCriterion>
+            <Modifier value="synchronized"/>
+        </MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="deprecatedMethods" description="methods which are marked as deprecated either with a javadoc tag or an annotation">
+    	<MethodsCriterion>
+    		<Javadoc name="deprecated"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="Deprecated"/>
+    	</MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="springMethods" description="methods annotated as 'Autowired', 'Order' or 'Required'">
+    	<MethodsCriterion>
+    		<Annotation name="Autowired"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="Order"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="Required"/>
+    	</MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="jmxMethods" description="methods annotated as 'ManagedAttribute', 'ManagedOperation', 'ManagedOperationParameter' or 'ManagedOperationParameters'">
+    	<MethodsCriterion>
+    		<Annotation name="ManagedAttribute"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="ManagedOperation"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="ManagedOperationParameter"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="ManagedOperationParameters"/>
+    	</MethodsCriterion>
+    </MethodSelector>
+    
+    <MethodSelector name="aspectJMethods" description="methods annotated as 'After', 'AfterRunning', 'AfterThrowing', 'Around', 'Before' or 'Pointcut'">
+    	<MethodsCriterion>
+    		<Annotation name="After"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="AfterRunning"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="AfterThrowing"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="Around"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="Before"/>
+    	</MethodsCriterion>
+    	<MethodsCriterion>
+    		<Annotation name="Pointcut"/>
+    	</MethodsCriterion>
+    </MethodSelector>
+    
+    <FieldSelector name="allFields" description="all fields, unfiltered">
+        <FieldsCriterion namePattern="*"/>
+    </FieldSelector>
+
+    <FieldSelector name="oneToManyFields" oneToMany="true" description="fields whose type is an array or a parameter to a templatized container">
+        <FieldsCriterion namePattern="*"/>
+    </FieldSelector>
+
+    <FieldSelector name="matchNamePatternFields" description="fields whose name matches a supplied pattern">
+        <FieldsCriterion namePatternSwitch="namePatternSwitch"/>
+    </FieldSelector>
+    
+    <FieldSelector criteriaAnded="true" name="packageDefaultFields" description="fields with default accessibility, ie package visibility">
+        <FieldsCriterion excludedOtherSelector="publicFields"/>
+        <FieldsCriterion excludedOtherSelector="protectedFields"/>
+        <FieldsCriterion excludedOtherSelector="privateFields"/>
+    </FieldSelector>
+    
+    <FieldSelector name="privateFields" description="fields with private accessibility">
+        <FieldsCriterion>
+            <Modifier value="private"/>
+        </FieldsCriterion>
+    </FieldSelector>
+    
+    <FieldSelector name="protectedFields" description="fields with protected accessibility">
+        <FieldsCriterion>
+            <Modifier value="protected"/>
+        </FieldsCriterion>
+    </FieldSelector>
+    
+    <FieldSelector name="publicFields" description="fields with public accessibility">
+        <FieldsCriterion>
+            <Modifier value="public"/>
+        </FieldsCriterion>
+    </FieldSelector>
+    
+    <FieldSelector name="staticFields" description="static fields, as opposed to instance fields">
+        <FieldsCriterion>
+            <Modifier value="static"/>
+        </FieldsCriterion>
+    </FieldSelector>
+    
+    <FieldSelector name="referencingOwner" description="fields whose type matches the class/interface in which they are declared">
+        <FieldsCriterion matchesDeclarer="true"/>
+    </FieldSelector>
+    
+    <FieldSelector criteriaAnded="true" name="serialUIDFields" description="static fields called serialVersionUID">
+        <FieldsCriterion>
+            <Modifier value="static"/>
+        </FieldsCriterion>
+        <FieldsCriterion namePattern="serialVersionUID"/>
+    </FieldSelector>
+    
+    <FieldSelector name="deprecatedFields" description="fields which are marked as deprecated either with a javadoc tag or an annotation">
+    	<FieldsCriterion>
+    		<Javadoc name="deprecated"/>
+    	</FieldsCriterion>
+    	<FieldsCriterion>
+    		<Annotation name="Deprecated"/>
+    	</FieldsCriterion>
+    </FieldSelector>
+    
+    <FieldSelector name="fieldsByOwnerName" description="fields whose declaring type's name matches a pattern">
+    	<FieldsCriterion declaredBy="nameSwitchedTypes"/>
+    </FieldSelector>
+    
+    <FieldSelector name="springFields" description="fields annotated as 'Autowired', 'Order', 'Qualified'">
+    	<FieldsCriterion>
+    		<Annotation name="Autowired"/>
+    	</FieldsCriterion>
+    	<FieldsCriterion>
+    		<Annotation name="Order"/>
+    	</FieldsCriterion>
+    	<FieldsCriterion>
+    		<Annotation name="Qualifier"/>
+    	</FieldsCriterion>
+    </FieldSelector>
+    
+    <FieldSelector name="aspectJFields" criteriaAnded="true" description="static fields annotated as 'DeclareParents'">
+    	<FieldsCriterion>
+    		<Modifier value="static"/>
+    	</FieldsCriterion>
+    	<FieldsCriterion>
+    		<Annotation name="DeclareParents"/>
+    	</FieldsCriterion>
+    </FieldSelector>
+    
+    <DiagramStyle description="default standard diagram style" exceptionsDisplayLevel="UNQUALIFIED" name="defaultDiagramStyle" showsParameterNames="true" typesInSignaturesDisplayLevel="UNQUALIFIED">
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="allFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="allMethods"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" typeSelector="allTypes"/>
+        <FieldLineBinding fromSelector="oneToManyFields" styleSwitch="howToShowFieldLinesOptions" switchQualifier="manhattan" toSelector="allTypes">
+            <LineStyle color="#d12e2e" manhattan="true"/>
+        </FieldLineBinding>
+        <FieldLineBinding fromSelector="oneToManyFields" styleSwitch="howToShowFieldLinesOptions" switchQualifier="straight" toSelector="allTypes">
+            <LineStyle color="#d12e2e"/>
+        </FieldLineBinding>
+        <FieldLineBinding fromSelector="allFields" styleSwitch="howToShowFieldLinesOptions" switchQualifier="straight" toSelector="allTypes">
+            <LineStyle color="#913e3e"/>
+        </FieldLineBinding>
+        <FieldLineBinding fromSelector="allFields" styleSwitch="howToShowFieldLinesOptions" switchQualifier="manhattan" toSelector="allTypes">
+            <LineStyle color="#913e3e" manhattan="true"/>
+        </FieldLineBinding>
+        <InheritanceLineBinding fromSelector="allTypes" styleSwitch="howToShowInheritanceOptions" switchQualifier="straight" toSelector="allInterfaces">
+            <LineStyle color="#3e3e91"/>
+        </InheritanceLineBinding>
+        <InheritanceLineBinding fromSelector="allTypes" styleSwitch="howToShowInheritanceOptions" switchQualifier="straight" toSelector="allClasses">
+            <LineStyle color="#355200"/>
+        </InheritanceLineBinding>
+        <InheritanceLineBinding fromSelector="allTypes" styleSwitch="howToShowInheritanceOptions" switchQualifier="manhattan" toSelector="allInterfaces">
+            <LineStyle color="#3e3e91" manhattan="true"/>
+        </InheritanceLineBinding>
+        <InheritanceLineBinding fromSelector="allTypes" styleSwitch="howToShowInheritanceOptions" switchQualifier="manhattan" toSelector="allClasses">
+            <LineStyle color="#355200" manhattan="true"/>
+        </InheritanceLineBinding>
+        <DependencyLineBinding fromSelector="allTypes" styleSwitch="howToShowDependenciesOptions" switchQualifier="straight" toSelector="allTypes">
+            <LineStyle color="#000000" dotted="true"/>
+        </DependencyLineBinding>
+        <DependencyLineBinding fromSelector="allTypes" styleSwitch="howToShowDependenciesOptions" switchQualifier="manhattan" toSelector="allTypes">
+            <LineStyle color="#000000" dotted="true" manhattan="true"/>
+        </DependencyLineBinding>
+    </DiagramStyle>
+    
+    <DiagramStyle description="all members shown in smallest text size" name="allMembersSmallest" superStyle="defaultDiagramStyle">
+        <FieldBinding displayStyle="smallestFieldOrMethod" fieldSelector="allFields"/>
+        <MethodBinding displayStyle="smallestFieldOrMethod" methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows all types in blue" name="allTypesBlue" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="blueTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows all types in gray" name="allTypesGray" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="grayTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows all types in green" name="allTypesGreen" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="greenTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows all types in orange" name="allTypesOrange" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows all types in pink" name="allTypesPink" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="pinkTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows all types in purple" name="allTypesPurple" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows types without members and dependency lines only" name="dependenciesOnly" superStyle="hideAllMembers">
+        <FieldLineBinding fromSelector="allFields" toSelector="allTypes"/>
+        <InheritanceLineBinding fromSelector="allTypes" toSelector="allTypes"/>
+        <DependencyLineBinding fromSelector="allTypes" toSelector="allTypes">
+            <LineStyle color="#000000" dotted="true"/>
+        </DependencyLineBinding>
+    </DiagramStyle>
+    
+    <DiagramStyle description="enlarges the text of fields matching a name pattern" name="enlargeFieldsByPattern" superStyle="allMembersSmallest">
+        <FieldBinding displayStyle="largerFieldOrMethod" fieldSelector="matchNamePatternFields"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="enlarges the text of methods matching a name pattern" name="enlargeMethodsByPattern" superStyle="allMembersSmallest">
+        <MethodBinding displayStyle="largerFieldOrMethod" methodSelector="matchNamePatternMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows overriding and overridden methods in large text, all fields are hidden" name="enlargedOverriding" superStyle="allMembersSmallest">
+        <FieldBinding fieldSelector="allFields"/>
+        <MethodBinding displayStyle="largerFieldOrMethod" methodSelector="overridingMethods"/>
+        <FieldLineBinding fromSelector="allFields" lineDescriber="field" toSelector="allTypes"/>
+        <DependencyLineBinding fromSelector="allTypes" lineDescriber="dependency" toSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="all lines in light gray" exceptionsDisplayLevel="OMIT" name="faintLines" typesInSignaturesDisplayLevel="OMIT">
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="allFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="allMethods"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" typeSelector="allTypes"/>
+        <FieldLineBinding fromSelector="allFields" lineDescriber="field" toSelector="allTypes">
+            <LineStyle color="#cdcdd7"/>
+        </FieldLineBinding>
+        <InheritanceLineBinding fromSelector="allTypes" lineDescriber="inheritance" toSelector="allTypes">
+            <LineStyle color="#cdcdd7"/>
+        </InheritanceLineBinding>
+    </DiagramStyle>
+    
+    <DiagramStyle description="hides fields, hide methods, hide inner classes" name="hideAllMembers" superStyle="defaultDiagramStyle">
+        <FieldBinding fieldSelector="allFields"/>
+        <MethodBinding methodSelector="allMethods"/>
+        <TypeBinding typeSelector="innerClasses"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="hides constructors" name="hideConstructors" superStyle="defaultDiagramStyle">
+        <MethodBinding methodSelector="onlyContructorMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="hide get and set methods" name="hideGetAndSet" superStyle="defaultDiagramStyle">
+        <MethodBinding methodSelector="getterMethods"/>
+        <MethodBinding methodSelector="setterMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="hide methods which override another method" name="hideOverridingMethods" superStyle="defaultDiagramStyle">
+        <MethodBinding methodSelector="overridingMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="hides serialUID fields" name="hideSerialUIDFields" superStyle="defaultDiagramStyle">
+        <FieldBinding fieldSelector="serialUIDFields"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show abstract classes in orange" name="highlightAbstractClasses" superStyle="allTypesGray">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="abstractTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="higlight classes which depend upon types whose package matches a pattern" name="highlightDependUponMatchingPackagePattern" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="dependUponTypesInMatchingPackage"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight exception types" name="highlightExceptions" superStyle="allTypesGray">
+        <TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="exceptionTypes"/>
+        <TypeBinding displayStyle="grayTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight all @generated classes" name="highlightGeneratedClasses" superStyle="allTypesGray">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="generatedTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight inheritance by type name" name="highlightInheritanceLines" superStyle="faintLines">
+        <InheritanceLineBinding fromSelector="matchPatternTypes" lineDescriber="inheritance" toSelector="allTypes">
+            <LineStyle color="#3e3e91"/>
+        </InheritanceLineBinding>
+        <InheritanceLineBinding fromSelector="allTypes" lineDescriber="inheritance" toSelector="matchPatternTypes">
+            <LineStyle color="#3e3e91"/>
+        </InheritanceLineBinding>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight interfaces (and inheritance lines involving interfaces)" name="highlightInterfaces" superStyle="allTypesGray">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="interfaceTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlights all jre types" name="highlightJreTypes" superStyle="allTypesGray">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="javaRuntime"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight fields and methods with name matching a pattern" name="highlightMatchingPatternMembers" superStyle="defaultDiagramStyle">
+        <FieldBinding displayStyle="largestRedFieldOrMethod" fieldSelector="matchNamePatternFields"/>
+        <MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="matchNamePatternMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight in orange types matching name pattern" name="highlightMatchingNamePattern" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="nameSwitchedTypes"/>
+        <TypeBinding displayStyle="grayTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight types matching package name pattern" name="highlightMatchingPackagePattern" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="typesInMatchingPackage"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight types matching name pattern" name="highlightMatchingPackagePatternOrSubtypes" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="typesInMatchingPackage"/>
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="childOfTypesInMatchingPackage"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight classes with references to self" name="highlightRefToSelfClasses" superStyle="allTypesGray">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="referenceToSelfTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight serializable classes in orange" name="highlightSerializableClasses" superStyle="allTypesGray">
+        <TypeBinding displayStyle="orangeTypeDisplayStyle" typeSelector="serializableTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight types with author matching a pattern" name="highlightTypesByAuthor" superStyle="allTypesGray">
+        <TypeBinding displayStyle="greenTypeDisplayStyle" typeSelector="matchingAuthorPattern"/>
+    </DiagramStyle>
+
+    <DiagramStyle description="displays only fields and field lines - inheritance lines faint" name="justFieldsAndFieldLines" typesInSignaturesDisplayLevel="UNQUALIFIED">
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="allFields"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" typeSelector="allTopLevelTypes"/>
+        <FieldLineBinding fromSelector="oneToManyFields" lineDescriber="field" styleSwitch="howToShowFieldLinesOptions" switchQualifier="manhattan" toSelector="allTypes">
+            <LineStyle color="#d12e2e" manhattan="true"/>
+        </FieldLineBinding>
+        <FieldLineBinding fromSelector="oneToManyFields" lineDescriber="field" styleSwitch="howToShowFieldLinesOptions" switchQualifier="straight" toSelector="allTypes">
+            <LineStyle color="#d12e2e"/>
+        </FieldLineBinding>
+        <FieldLineBinding fromSelector="allFields" lineDescriber="field" styleSwitch="howToShowFieldLinesOptions" switchQualifier="manhattan" toSelector="allTypes">
+            <LineStyle color="#913e3e" manhattan="true"/>
+        </FieldLineBinding>
+        <FieldLineBinding fromSelector="allFields" lineDescriber="field" styleSwitch="howToShowFieldLinesOptions" switchQualifier="straight" toSelector="allTypes">
+            <LineStyle color="#913e3e"/>
+        </FieldLineBinding> 
+        <InheritanceLineBinding fromSelector="allTypes" lineDescriber="inheritance" toSelector="allTypes">
+            <LineStyle color="#cdcdd7"/>
+        </InheritanceLineBinding>
+    </DiagramStyle>
+    
+    <DiagramStyle description="omits parameter types, parameter names and exception" exceptionsDisplayLevel="OMIT" name="noMethodSignatures" superStyle="defaultDiagramStyle" typesInSignaturesDisplayLevel="OMIT"/>
+    
+    <DiagramStyle description="show bytecode classes in white" name="showBytecodeClassesInWhite" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="grayTypeDisplayStyle" typeSelector="bytecodeTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show all signatures in gray" name="showGrayFieldsAndMethods" superStyle="allTypesGray">
+        <FieldBinding displayStyle="normalGrayTypes" fieldSelector="allFields"/>
+        <MethodBinding displayStyle="normalGrayTypes" methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows static members in large text" name="showLargeStaticMembers" superStyle="allMembersSmallest">
+        <FieldBinding displayStyle="largestRedFieldOrMethod" fieldSelector="staticFields"/>
+        <MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="staticMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows only static members" name="showOnlyStaticMembers" superStyle="hideAllMembers">
+    	<FieldBinding displayStyle="largestRedFieldOrMethod" fieldSelector="staticFields"/>
+    	<MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="staticMethods"/>
+    	<TypeBinding displayStyle="pinkTypeDisplayStyle" typeSelector="staticInnerTypes"/>
+    	<TypeBinding displayStyle="pinkTypeDisplayStyle" typeSelector="hasStaticMembers"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show names in signatures which match a pattern in red" name="showMatchingTypeNamesInRed" superStyle="showGrayFieldsAndMethods">
+        <FieldBinding displayStyle="normalRedNames" fieldSelector="matchNamePatternFields"/>
+        <MethodBinding displayStyle="normalRedNames" methodSelector="matchNamePatternMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows only constructors" name="showOnlyConstructors" superStyle="defaultDiagramStyle">
+        <FieldBinding fieldSelector="allFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="onlyContructorMethods"/>
+        <MethodBinding methodSelector="allMethods"/>
+        <TypeBinding typeSelector="innerClasses"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows only fields, no methods or inner types" name="showOnlyFields" superStyle="defaultDiagramStyle">
+        <MethodBinding methodSelector="allMethods"/>
+        <TypeBinding typeSelector="innerClasses"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="only shows get and set methods" name="showOnlyGetAndSet" superStyle="defaultDiagramStyle">
+        <FieldBinding fieldSelector="allFields"/>
+        <MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="getterMethods"/>
+        <MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="setterMethods"/>
+        <MethodBinding methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show only methods which override another method, hide all other methods" name="showOnlyOverridingMethods" superStyle="defaultDiagramStyle">
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="overridingMethods"/>
+        <MethodBinding methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show only synchronized methods" name="showOnlySynchronizedMethods" superStyle="defaultDiagramStyle">
+        <FieldBinding fieldSelector="allFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="synchronizedMethods"/>
+        <MethodBinding methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows only private methods and fields" name="showPrivateMembersOnly" superStyle="hideAllMembers">
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="privateFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="privateMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="shows only public methods and fields" name="showPublicMembersOnly" superStyle="hideAllMembers">
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="publicFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="publicMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show all type names in signatures in green" name="showTypeNamesInGreen" superStyle="defaultDiagramStyle">
+        <FieldBinding displayStyle="normalGreenTypes" fieldSelector="allFields"/>
+        <MethodBinding displayStyle="normalGreenTypes" methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show all type names in signatures in red" name="showTypeNamesInRed" superStyle="defaultDiagramStyle">
+        <FieldBinding displayStyle="normalRedTypes" fieldSelector="allFields"/>
+        <MethodBinding displayStyle="normalRedTypes" methodSelector="allMethods"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="show deprecated types and members in red" name="highlightDeprecated" superStyle="defaultDiagramStyle">
+        <FieldBinding displayStyle="normalRedNames" fieldSelector="deprecatedFields"/>
+        <MethodBinding displayStyle="normalRedNames" methodSelector="deprecatedMethods"/>
+        <TypeBinding displayStyle="pinkTypeDisplayStyle" typeSelector="deprecatedTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="green classes, blue interfaces, purple abstract, grayBytecode" name="standardColors" superStyle="defaultDiagramStyle">
+        <TypeBinding displayStyle="grayTypeDisplayStyle" typeSelector="bytecodeTypes"/>
+        <TypeBinding displayStyle="blueTypeDisplayStyle" typeSelector="interfaceTypes"/>
+        <TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="abstractTypes"/>
+        <TypeBinding displayStyle="greenTypeDisplayStyle" typeSelector="allTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="selects members by visibility" name="visibilityFiltering" superStyle="defaultDiagramStyle">
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="publicFields" styleSwitch="visibilityOptions" switchQualifier="public"/>
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="protectedFields" styleSwitch="visibilityOptions" switchQualifier="protected"/>
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="privateFields" styleSwitch="visibilityOptions" switchQualifier="private"/>
+        <FieldBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" fieldSelector="packageDefaultFields" styleSwitch="visibilityOptions" switchQualifier="package - default"/>
+        <FieldBinding fieldSelector="allFields"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="publicMethods" styleSwitch="visibilityOptions" switchQualifier="public"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="protectedMethods" styleSwitch="visibilityOptions" switchQualifier="protected"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="privateMethods" styleSwitch="visibilityOptions" switchQualifier="private"/>
+        <MethodBinding displayStyle="blackNormalFieldOrMethodDisplayStyle" methodSelector="packageDefaultMethods" styleSwitch="visibilityOptions" switchQualifier="package - default"/>
+        <MethodBinding methodSelector="allMethods"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" styleSwitch="visibilityOptions" switchQualifier="public" typeSelector="publicTypes"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" styleSwitch="visibilityOptions" switchQualifier="protected" typeSelector="protectedTypes"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" styleSwitch="visibilityOptions" switchQualifier="private" typeSelector="privateTypes"/>
+        <TypeBinding displayStyle="yellowTypeDisplayStyle" styleSwitch="visibilityOptions" switchQualifier="package - default" typeSelector="packageDefaultTypes"/>
+        <TypeBinding typeSelector="innerClasses"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlights spring elements" name="highlightSpring" superStyle="allTypesGray">
+    	<FieldBinding displayStyle="largestRedFieldOrMethod" fieldSelector="springFields"/>
+    	<MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="springMethods"/>
+    	<TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="springTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlight JMX elements" name="highlightJMX" superStyle="allTypesGray">
+    	<MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="jmxMethods"/>
+    	<TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="jmxTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlights AspectJ elements" name="highlightAspectJ" superStyle="allTypesGray">
+    	<FieldBinding displayStyle="largestRedFieldOrMethod" fieldSelector="aspectJFields"/>
+    	<MethodBinding displayStyle="largestRedFieldOrMethod" methodSelector="aspectJMethods"/>
+    	<TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="aspectJTypes"/>
+    </DiagramStyle>
+    
+    <DiagramStyle description="highlights JUnit3 tests" name="highlightJUnit3" superStyle="allTypesGray">
+    	<TypeBinding displayStyle="purpleTypeDisplayStyle" typeSelector="junit3types"/>
+    </DiagramStyle>
+    
+    <PatternSwitch name="authorPattern" prompt="@author pattern"/>
+    
+    <PatternSwitch name="namePatternSwitch" prompt="name pattern"/>
+    
+    <OptionsSwitch isSingleSelection="true" name="howToShowDependenciesOptions" prompt="how to show dependencies">
+        <Option value="straight"/>
+        <Option value="manhattan"/>
+        <Option value="hidden"/>
+    </OptionsSwitch>
+    
+    <OptionsSwitch isSingleSelection="true" name="howToShowFieldLinesOptions" prompt="how to show field lines">
+        <Option value="straight"/>
+        <Option value="manhattan"/>
+        <Option value="hidden"/>
+    </OptionsSwitch>
+    
+    <OptionsSwitch isSingleSelection="true" name="howToShowInheritanceOptions" prompt="how to show inheritance lines">
+        <Option value="straight"/>
+        <Option value="manhattan"/>
+        <Option value="hidden"/>
+    </OptionsSwitch>
+    
+    <OptionsSwitch name="visibilityOptions" prompt="member visibilities">
+        <Option value="public"/>
+        <Option value="protected"/>
+        <Option value="package - default"/>
+        <Option value="private"/>
+    </OptionsSwitch>
+    
+    <TypeDisplayStyle borderColor="#336699" membersBackgroundTopColor="#cbdee6" name="blueTypeDisplayStyle"/>
+    
+    <TypeDisplayStyle borderColor="#999999" membersBackgroundTopColor="#d2d2d2" name="grayTypeDisplayStyle"/>
+    
+    <TypeDisplayStyle borderColor="#609060" membersBackgroundTopColor="#b5f834" name="greenTypeDisplayStyle"/>
+    
+    <TypeDisplayStyle borderColor="#c86807" membersBackgroundTopColor="#ffcc60" name="orangeTypeDisplayStyle"/>
+
+    <TypeDisplayStyle borderColor="#8f214e" membersBackgroundTopColor="#ff99cc" name="pinkTypeDisplayStyle"/>
+
+    <TypeDisplayStyle borderColor="#9a2e9a" membersBackgroundTopColor="#f6c3ff" name="purpleTypeDisplayStyle"/>
+
+    <TypeDisplayStyle borderColor="#c39200" membersBackgroundTopColor="#ffff98" name="yellowTypeDisplayStyle"/>
+
+    <FieldOrMethodDisplayStyle name="blackNormalFieldOrMethodDisplayStyle">
+        <Name>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Name>
+        <Type>
+            <TextStyle bias="NORMAL" color="#3e3e91" italic="true"/>
+        </Type>
+        <Other>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="largerFieldOrMethod">
+        <Name>
+            <TextStyle bias="LARGER" color="#000000"/>
+        </Name>
+        <Type>
+            <TextStyle bias="LARGER" color="#3e3e91"/>
+        </Type>
+        <Other>
+            <TextStyle bias="LARGER" color="#000000"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="largestRedFieldOrMethod">
+        <Name>
+            <TextStyle bias="LARGEST" color="#cf0202" bold="true"/>
+        </Name>
+        <Type>
+            <TextStyle bias="LARGEST" color="#cf0202" bold="true"/>
+        </Type>
+        <Other>
+            <TextStyle bias="LARGEST" color="#c90404" bold="true"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="normalGrayTypes">
+        <Name>
+            <TextStyle bias="NORMAL" color="#7f7f7f"/>
+        </Name>
+        <Type>
+            <TextStyle bias="NORMAL" color="#7f7f7f"/>
+        </Type>
+        <Other>
+            <TextStyle bias="NORMAL" color="#7f7f7f"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="normalGreenTypes">
+        <Name>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Name>
+        <Type>
+            <TextStyle bias="NORMAL" color="#205c00"/>
+        </Type>
+        <Other>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="normalRedNames">
+        <Name>
+            <TextStyle bias="NORMAL" color="#cf0202"/>
+        </Name>
+        <Type>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Type>
+        <Other>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="normalRedTypes">
+        <Name>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Name>
+        <Type>
+            <TextStyle bias="NORMAL" color="#8a1916"/>
+        </Type>
+        <Other>
+            <TextStyle bias="NORMAL" color="#000000"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+    <FieldOrMethodDisplayStyle name="smallestFieldOrMethod">
+        <Name>
+            <TextStyle bias="SMALLEST" color="#999999"/>
+        </Name>
+        <Type>
+            <TextStyle bias="SMALLEST" color="#3e3e91"/>
+        </Type>
+        <Other>
+            <TextStyle bias="SMALLEST" color="#999999"/>
+        </Other>
+    </FieldOrMethodDisplayStyle>
+    
+</AgileJConfiguration>

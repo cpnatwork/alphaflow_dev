@@ -1,0 +1,20 @@
+<change-set xmlns='http://drools.org/drools-5.0/change-set'
+	xmlns:xs='http://www.w3.org/2001/XMLSchema-instance' xs:schemaLocation='http://drools.org/drools-5.0/change-set.xsd'>
+	<add>
+		<!--
+			load the rules from a http URL location also possible OR from a
+			directory (it is expected that all resources in that folder are of
+			the same type): <resource source='file:/rules' type='PKG' />
+			<resource source='http:org/domain/myrules.drl' type='DRL' />
+			<resource source='classpath:data/myrules.drl' type='DRL' />
+		-->
+		<!--
+			Note that for the resource type PKG the drools-compiler dependency is
+			not needed as the Knowledge Agent is able to handle those with just
+			drools-core.
+		-->
+
+		<!--<resource source='file:src/main/rules/alphaprops-rules.drl' type='DRL' />-->
+		<resource source='classpath:rules/alphaprops-rules.drl' type='DRL' />
+	</add>
+</change-set>

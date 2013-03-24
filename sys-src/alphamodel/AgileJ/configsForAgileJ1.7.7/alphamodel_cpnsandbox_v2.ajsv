@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--AgileJ Ltd. (http://www.agilej.com)-->
+<ajsv>
+    <diagram creationDate="2012-Mar-29 12:42" licenseGrade="non-commercial" licenseeName="Christoph_Neumann" licenseeOrganization="www6.informatik.uni-erlangen.de/EN/research/projects/promed/alphaFlow/index.ushtml" style="cpnDefaultStyle" version="1.7.7.v20120311-1127">
+        <switch switchID="howToShowDependenciesOptions" switchValue="straight"/>
+        <switch switchID="hidePublicFieldsOption" switchValue="show"/>
+        <switch switchID="hidePackageFieldsOption" switchValue="hide"/>
+        <switch switchID="hidePrivateFieldsOption" switchValue="hide"/>
+        <switch switchID="hideProtectedFieldsOption" switchValue="show"/>
+        <switch switchID="howToShowFieldLinesOptions" switchValue="straight"/>
+        <switch switchID="howToShowInheritanceOptions" switchValue="straight"/>
+        <class className="alpha.model.identification.AlphaCardID" project="alphamodel" xLocation="365" yLocation="865"/>
+        <class className="alpha.model.AlphaCardDescriptor" project="alphamodel" xLocation="755" yLocation="826"/>
+        <class className="alpha.model.AlphaDoc" project="alphamodel" xLocation="100" yLocation="881"/>
+        <class className="alpha.model.adornment.AdornmentDataType" project="alphamodel" xLocation="639" yLocation="456"/>
+        <class className="alpha.model.adornment.AdornmentEnumRange" project="alphamodel" xLocation="1582" yLocation="129"/>
+        <class className="alpha.model.adornment.AdpAdornment" project="alphamodel" xLocation="1606" yLocation="451"/>
+        <class className="alpha.model.adornment.AdpEnum" project="alphamodel" xLocation="853" yLocation="100"/>
+        <class className="alpha.model.adornment.PrototypedAdornment" project="alphamodel" xLocation="1517" yLocation="813"/>
+        <class className="alpha.model.apa.APAPayload" project="alphamodel" xLocation="922" yLocation="1347"/>
+        <class className="alpha.model.cra.CRAPayload" project="alphamodel" xLocation="1363" yLocation="1222"/>
+        <class className="alpha.model.psa.PSAPayload" project="alphamodel" xLocation="543" yLocation="1327"/>
+        <class className="alpha.model.psa.AlphaCardRelationship" project="alphamodel" xLocation="112" yLocation="1407"/>
+        <class className="alpha.model.psa.AlphaCardRelationshipType" project="alphamodel" xLocation="365" yLocation="1609"/>
+        <class className="alpha.model.adornment.ConsensusScope" project="alphamodel" xLocation="1291" yLocation="599"/>
+        <class className="alpha.model.Payload" project="alphamodel" xLocation="760" yLocation="1052"/>
+        <class className="alpha.model.cra.Participant" project="alphamodel" xLocation="1886" yLocation="1525"/>
+        <class className="alpha.model.cra.ContributorID" project="alphamodel" xLocation="1761" yLocation="1847"/>
+        <class className="alpha.model.cra.EndpointID" project="alphamodel" xLocation="1967" yLocation="1852"/>
+        <class className="alpha.model.cra.ObjectUnderConsideration" project="alphamodel" xLocation="1208" yLocation="1526"/>
+        <class className="alpha.model.versionmap.VersionMap" project="alphamodel" xLocation="300" yLocation="743"/>
+        <class className="alpha.model.cra.Token" project="alphamodel" xLocation="1989" yLocation="1256"/>
+    </diagram>
+</ajsv>

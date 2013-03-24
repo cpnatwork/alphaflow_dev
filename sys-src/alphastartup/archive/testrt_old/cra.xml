@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<craPayload>
+    <tsa>false</tsa>
+    <cra>true</cra>
+    <LoParticipants>
+        <subject>
+            <institution>institution</institution>
+            <role>role</role>
+            <actor>actor</actor>
+        </subject>
+        <node>
+            <host>faui6t</host>
+            <ip>asdf</ip>
+            <port>12345</port>
+        </node>
+    </LoParticipants>
+    <LoParticipants>
+        <subject>
+            <institution>institution2</institution>
+            <role>role2</role>
+            <actor>actor2</actor>
+        </subject>
+        <node>
+            <host>faui6s5</host>
+            <ip>asdf</ip>
+            <port>12346</port>
+        </node>
+    </LoParticipants>
+    <LoParticipants>
+        <subject>
+            <institution>institution3</institution>
+            <role>role3</role>
+            <actor>actor3</actor>
+        </subject>
+        <node>
+            <host>faui6s6</host>
+            <ip>asdf</ip>
+            <port>12347</port>
+        </node>
+    </LoParticipants>
+</craPayload>

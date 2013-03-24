@@ -1,0 +1,436 @@
+function void sendAlphaCardDescriptor(AlphaCardDescriptor ac, CRAPayload craPayload, UpdateServiceSender updateServiceSender, Logger LOGGER) {
+	LOGGER.finer("Sending an alpha-Card descriptor!");
+	updateServiceSender.sendUpdate(ac, getNodeIDs(craPayload));
+}
+
+function void sendAddAlphaCardEvent(AddAlphaCardEvent aace, CRAPayload craPayload, UpdateServiceSender updateServiceSender, Logger LOGGER) {
+	LOGGER.finer("Sending an AddAlphaCardEvent");
+	# Disable further propagation to prevent infinite "bouncing" of updates between participants
+	aace.setPropagateChange(false);
+	# Dispatch the update for sending
+	updateServiceSender.sendUpdate(aace, getNodeIDs(craPayload));
+}
+
+function void propagateParticipantJoin(ParticipantJoinEvent pje, CRAPayload craPayload, UpdateServiceSender updateServiceSender, Logger LOGGER) {
+	LOGGER.finer("Propagate the participant join!");
+	pje.setPropagateChange(false);
+	updateServiceSender.sendUpdate(pje, getNodeIDs(craPayload));
+}
+
+function void propagatePayloadChange(ChangePayloadEvent cpe, CRAPayload craPayload, UpdateServiceSender updateServiceSender, Logger LOGGER) {
+	LOGGER.finer("Propagate the payload change!");
+	cpe.setPropagateChange(false);
+	updateServiceSender.sendUpdate(cpe, getNodeIDs(craPayload));
+}
+
+function void propagateAdornmentSchemaChange(ChangeAlphaCardDescriptorEvent cae, CRAPayload craPayload, UpdateServiceSender updateServiceSender, Logger LOGGER){
+	LOGGER.finer("Propagate the Adornment schema change!");
+	cae.setPropagateChange(false);
+	updateServiceSender.sendUpdate(cae, getNodeIDs(craPayload));
+}
+
+
+
+###################################
+### Check Changeability Rules #####
+###################################
+rule "Check Changeabilty: card does not have payload"
+	no-loop true
+	activation-group "check changeability"
+	when
+		chre : CheckChangeabilityEvent(acid : alphaCardID, hp : hasPayload)
+		ac : AlphaCardDescriptor( id == acid )
+		eval(hp == true)
+	then 
+		LOGGER.finer( "RULE NAME: \"Check Changeabilty: card has no payload\" - AlphaCard ID:(" + acid.getCardID() + ")");
+		
+		# first allow all, then deny explicitly
+		for(AlphaAdornment a : ac.getAlphaAdornments()) {
+			chre.getChangeables().put(a.getName(), Boolean.TRUE);
+		}
+		chre.getChangeables().put(CorpusGenericus.FUNDAMENTALSEMANTICTYPE.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.VALIDITY.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.VISIBILITY.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.VARIANT.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.VERSION.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.VERSIONCONTROL.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.OCID.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.OCNAME.value(), Boolean.FALSE);
+		
+		update(chre);
+end
+
+rule "Check Changeabilty: card has payload"
+	no-loop true
+	activation-group "check changeability"
+	when
+		chre : CheckChangeabilityEvent(acid : alphaCardID, hp : hasPayload)
+		ac : AlphaCardDescriptor( id == acid )
+		eval(hp == false)
+	then 
+		LOGGER.finer( "RULE NAME: \"Check Changeabilty: card has payload\" - AlphaCard ID:(" + acid.getCardID() + ")");
+
+		# first allow all, then deny explicitly
+		for(AlphaAdornment a : ac.getAlphaAdornments()) {
+			chre.getChangeables().put(a.getName(), Boolean.TRUE);
+		}
+		chre.getChangeables().put(CorpusGenericus.ACTOR.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.ROLE.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.INSTITUTION.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.ALPHACARDTYPE.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.FUNDAMENTALSEMANTICTYPE.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.OCID.value(), Boolean.FALSE);
+		chre.getChangeables().put(CorpusGenericus.OCNAME.value(), Boolean.FALSE);
+		
+		if( ac.getAlphaAdornment(CorpusGenericus.VISIBILITY.value()).getValue().equalsIgnoreCase(Visibility.PUBLIC.value()) ) {
+			chre.getChangeables().put(CorpusGenericus.VISIBILITY.value(), Boolean.FALSE);
+			LOGGER.finer("##########+++++++++++++++++############ Once PUBLIC, always PUBLIC ");
+		}
+		
+		if(ac.getAlphaAdornment(CorpusGenericus.VALIDITY.value()).
+			getValue().equalsIgnoreCase(Validity.VALID.value())) {
+			chre.getChangeables().put(CorpusGenericus.VALIDITY.value(), Boolean.FALSE);
+			LOGGER.finer("##########+++++++++++++++++############ Once VALID, always VALID ");
+		}
+
+		if( ac.getAlphaAdornment(CorpusGenericus.VERSIONCONTROL.value()).getValue().equals(VersionControl.VERSIONED.value()) ) {
+			chre.getChangeables().put(CorpusGenericus.VERSIONCONTROL.value(), Boolean.FALSE);
+		}
+
+		update(chre);
+		
+end
+
+rule "Check Changeabilty: card is marked as deleted"
+	no-loop true
+	activation-group "check changeability"
+	when
+		chre : CheckChangeabilityEvent(acid : alphaCardID, hp : hasPayload)
+		ac : AlphaCardDescriptor( id == acid )
+		eval(	ac.getAlphaAdornment(CorpusGenericus.FUNDAMENTALSEMANTICTYPE.value()).getValue().
+					equalsIgnoreCase(FundamentalSemanticType.CONTENT.value()) &&
+				ac.getAlphaAdornment(CorpusGenericus.DELETED.value()).getValue().equalsIgnoreCase
+					(Boolean.TRUE.toString())	)
+	then
+		LOGGER.finer( "RULE NAME: \"Check Changeabilty: card is marked as deleted\" - AlphaCard ID:(" + acid.getCardID() + ")");
+		# deny all, except the delete Adornment
+		for(AlphaAdornment a : ac.getAlphaAdornments()) {
+			if(a.getName().equals(CorpusGenericus.DELETED.value())) {
+				chre.getChangeables().put(a.getName(), Boolean.TRUE);
+			} else {
+				chre.getChangeables().put(a.getName(), Boolean.FALSE);
+			}
+		}
+
+end
+
+
+#rule "Check Changeabilty: user ist not owner of AlphaCard"
+#	no-loop true
+#	activation-group "check changeability"
+#	when
+#		chre : CheckChangeabilityEvent(acid : alphaCardID, u : user)
+#		ac : AlphaCardDescriptor( id == acid )
+#		eval(ac.getAdaptiveAdornment(CorpusGenericus.ACTOR.value()).getValue().substring(1).equals(u) == false)
+#	then
+#		LOGGER.finer( "RULE NAME: \"Check Changeabilty: user ist not owner of AlphaCard\" - AlphaCard ID:(" + acid.getCardID() + ")");
+#		# deny all explicitly
+#		for(AdaptiveAdornment a : ac.getAdaptiveAdornments()) {
+#			chre.getChangeables().put(a.getName(), Boolean.FALSE);
+#		}
+#end
+
+rule "Set version"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		vvs : VerVarStoreFacade()
+		cae : ChangeAdornmentEvent(acid : alphaCardID, title : adornmentTitle, newVal : newValue, pc : propagateChange)
+		ac : AlphaCardDescriptor(id == acid)
+		eval(	title.equals(CorpusGenericus.VERSION.value()) )
+	then 
+		LOGGER.finer( "RULE NAME: \"Set version\" - Adornment: " +title+ " - AlphaCard ID:(" + acid.getCardID() + ")");
+		# New values sent from user will be ignored!
+		StringWrapper $nv = new StringWrapper(String.valueOf( (Double.valueOf(ac.getAlphaAdornment(CorpusGenericus.VERSION.value()).getValue()).doubleValue() + 1) ));
+		
+		if ( ac.getAlphaAdornment(CorpusGenericus.VERSIONCONTROL.value()).getValue().equals(VersionControl.UNVERSIONED.value()) ) {
+			modify(ac) {
+				getAlphaAdornment(CorpusGenericus.VERSIONCONTROL.value()).setValue(VersionControl.VERSIONED.value())
+			};
+		}
+		
+		modify(ac) {
+			getAlphaAdornment(CorpusGenericus.VERSION.value()).setValue($nv.getNewValue())
+		};
+		vvs.store(ac);
+		LOGGER.finer( "RULE NAME:++++++++++++++++++++++ -->NEW VERSION OF AC: " + ac.getAlphaAdornment(CorpusGenericus.VERSION.value()).getValue());
+		
+		if(pc == true) {
+			cae.setNewValue($nv.getNewValue());
+			propagateAdornmentChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+		
+		if(vvs.getPayload(acid) != null) {
+			// FIXME: eliminate setSptype/setVersion
+			vvs.setSptype(ac.getAlphaAdornment(CorpusGenericus.SYNTACTICPAYLOADTYPE.value()).getValue());
+			vvs.setVersion(ac.getAlphaAdornment(CorpusGenericus.VERSION.value()).getValue());
+			// FIXME: this is scary (says CPN)
+			vvs.putPayload(acid, vvs.getPayload(acid));
+		}
+end
+
+rule "Set variant"
+	no-loop true
+	when
+		vvs : VerVarStoreFacade()
+		craPayload : CRAPayload()
+		cae : ChangeAdornmentEvent(acid : alphaCardID, title : adornmentTitle, newVal : newValue, pc : propagateChange)
+		ac : AlphaCardDescriptor(id == acid)
+		eval(	title.equals(CorpusGenericus.VARIANT.value()) )
+	then 
+		LOGGER.finer( "RULE NAME: \"Set variant\" - Adornment: " +title+ " - AlphaCard ID:(" + acid.getCardID() + ")");
+		if(newVal == null || newVal.equals("-")) {
+			newVal = "0";
+		}
+		modify(ac) { getAlphaAdornment(title).setValue(newVal) };
+		
+		vvs.store(ac);
+	
+		if(pc == true) {
+			propagateAdornmentChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+end
+
+rule "Set visibility"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		vvs : VerVarStoreFacade()
+		cae : ChangeAdornmentEvent(acid : alphaCardID, title : adornmentTitle, newVal : newValue, pc : propagateChange)
+		ac : AlphaCardDescriptor(id == acid)
+		eval( 	title.equals(CorpusGenericus.VISIBILITY.value()) &&
+				(!ac.getAlphaAdornment(CorpusGenericus.VISIBILITY.value()).getValue().equalsIgnoreCase(Visibility.PUBLIC.value())))
+	then 
+		LOGGER.finer( "RULE NAME: \"Set visibility\" - Adornment: " +title+ " - AlphaCard ID:(" + acid.getCardID() + ")");
+		modify(ac) { getAlphaAdornment(title).setValue(newVal) };
+		
+		vvs.store(ac);
+
+		if( (pc == true) && ( newVal.equalsIgnoreCase(Visibility.PUBLIC.value()) == true ) ) {
+		
+			sendAlphaCardDescriptor(ac, craPayload, updateServiceSender, LOGGER);
+			
+			if(vvs.getPayload(acid) != null) {
+				ChangePayloadEvent cpe = new ChangePayloadEvent(acid, vvs.getPayload(acid));
+				propagatePayloadChange(cpe, craPayload, updateServiceSender, LOGGER);
+			}
+		}
+		
+		retract(cae);
+end
+
+rule "Set validity"
+	no-loop true
+	when
+		vvs : VerVarStoreFacade()
+		craPayload : CRAPayload()
+		cae : ChangeAdornmentEvent(acid : alphaCardID, title : adornmentTitle, newVal : newValue, pc : propagateChange)
+		ac : AlphaCardDescriptor(id == acid)
+		eval( 	title.equals(CorpusGenericus.VALIDITY.value()) &&
+				(!ac.getAlphaAdornment(CorpusGenericus.VALIDITY.value()).getValue().equalsIgnoreCase(Validity.VALID.value())))
+	then 
+		LOGGER.finer( "RULE NAME: \"Set validity\" - Adornment: " +title+ " - AlphaCard ID:(" + acid.getCardID() + ")");
+		modify(ac) { getAlphaAdornment(title).setValue(newVal) };
+	
+		vvs.store(ac);
+		
+		if(pc == true) {
+			propagateAdornmentChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+end
+
+rule "Once valid and public, start versioning"
+	no-loop true
+	salience 50
+	when
+		vvs : VerVarStoreFacade()
+		ac : AlphaCardDescriptor()
+		eval(	ac.getAlphaAdornment(CorpusGenericus.VISIBILITY.value()).getValue().equalsIgnoreCase(Visibility.PUBLIC.value()) &&  
+				ac.getAlphaAdornment(CorpusGenericus.VALIDITY.value()).getValue().equalsIgnoreCase(Validity.VALID.value()) &&
+				ac.getAlphaAdornment(CorpusGenericus.VERSIONCONTROL.value()).getValue().equals(VersionControl.UNVERSIONED.value())
+			)
+	then
+		LOGGER.finer( "RULE NAME: \"Once valid and public, start versioning\" - AlphaCard ID:(" + ac.getId().getCardID() + ") " );
+		# Start versioning from now on
+		modify(ac) { 
+			getAlphaAdornment(CorpusGenericus.VERSIONCONTROL.value()).setValue(VersionControl.VERSIONED.value())
+		};
+		vvs.store(ac);
+end
+
+###################################
+### Change Adornments Rules #######
+###################################
+
+rule "Set Adornment"
+	no-loop true
+	when
+		hwf : HydraWorkspaceImpl()
+		vvu: VersionVectorUtil()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		cae : ChangeAdornmentEvent(acid : alphaCardID, title : adornmentTitle, newVal : newValue, pc : propagateChange, acd: alphaCardDescriptor)
+		ac : AlphaCardDescriptor(id == acid)
+		eval(	!title.equals("")	)
+	then 
+		LOGGER.finer( "RULE NAME: \"Set adaptive adornment\" - Adornment: " +title+ " - AlphaCard ID:(" + acid.getCardID() + ")");
+		
+		if(pc == true){
+			cae.getAlphaCardDescriptor().getVersionVector().addParticipant(adc.getMyCurrentUser().getName() , cae.getAlphaCardDescriptor().getVersionVector().getCount(adc.getMyCurrentUser().getName()) + 1L );
+		}
+		# TODO: MODIFY STATEMENT: when ac : AlphaCardDescriptor(id == acid) --> existence check in "then" clause!
+		insertDescriptorIntoRepository(vvu,acd,pc);
+				
+		replaceAlphaCardDescriptor(ac, acd);
+			
+		# Propagate the update if necessary	
+		if(pc == true) {
+			propagateAdornmentChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+end
+
+rule "Change Adornment Schema: Delete Adornment"
+	no-loop true
+	when
+		hvs : HydraFacade()
+		hwf : HydraWorkspaceImpl()
+		vvu: VersionVectorUtil()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		cae : ChangeAdornmentSchemaEvent(acid : alphaCardID, title : adornmentTitle, adornment : newAdornment, pc : propagateChange, acd: alphaCardDescriptor)
+		ac : AlphaCardDescriptor(id == acid)
+		eval( adornment == null )
+	then 
+		LOGGER.finer( "RULE NAME: \"Change Adornment Schema: Delete Adornment\" - AlphaCard ID:(" + acid.getCardID() + ")");
+		
+		if(pc == true){
+			
+			cae.getAlphaCardDescriptor().getVersionVector().addParticipant(adc.getMyCurrentUser().getName() , cae.getAlphaCardDescriptor().getVersionVector().getCount(adc.getMyCurrentUser().getName()) + 1L );
+		}
+			
+		insertDescriptorIntoRepository(vvu,acd,pc);
+		
+		replaceAlphaCardDescriptor(ac, acd);
+			
+		if(pc == true) {
+			propagateAdornmentSchemaChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+		
+end
+
+rule "Change Adornment Schema: Add Adornment"
+	no-loop true
+	when
+		hvs : HydraFacade()
+		hwf : HydraWorkspaceImpl()
+		vvu: VersionVectorUtil()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		cae : ChangeAdornmentSchemaEvent(acid : alphaCardID, title : adornmentTitle, adornment : newAdornment, pc : propagateChange, acd: alphaCardDescriptor)
+		ac : AlphaCardDescriptor(id == acid)
+		eval(adornment != null && adornment.getName().equals(title))
+	then 
+		LOGGER.finer( "RULE NAME: \"Change Adornment Schema: Add Adornment\" - AlphaCard ID:(" + acid.getCardID() + ")");
+		
+		if(pc == true){
+			
+			cae.getAlphaCardDescriptor().getVersionVector().addParticipant(adc.getMyCurrentUser().getName() , cae.getAlphaCardDescriptor().getVersionVector().getCount(adc.getMyCurrentUser().getName()) + 1L );
+		}
+			
+		insertDescriptorIntoRepository(vvu,acd,pc);
+		
+		replaceAlphaCardDescriptor(ac, acd);
+					
+		if(pc == true) {
+			propagateAdornmentSchemaChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+end
+
+
+rule "Change Adornment Schema: Update Adornment"
+	no-loop true
+	when
+		hvs : HydraFacade()
+		hwf : HydraWorkspaceImpl()
+		vvu: VersionVectorUtil()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		cae : ChangeAdornmentSchemaEvent(acid : alphaCardID, title : adornmentTitle, adornment : newAdornment, pc : propagateChange, acd: alphaCardDescriptor)
+		ac : AlphaCardDescriptor(id == acid)
+		eval(adornment != null && !adornment.getName().equals(title))
+	then 
+		LOGGER.finer( "RULE NAME: \"Change Adornment Schema: Update Adornment\" - AlphaCard ID:(" + acid.getCardID() + ")");
+	
+		if(pc == true){
+			
+			cae.getAlphaCardDescriptor().getVersionVector().addParticipant(adc.getMyCurrentUser().getName() , cae.getAlphaCardDescriptor().getVersionVector().getCount(adc.getMyCurrentUser().getName()) + 1L );
+		}
+			
+		insertDescriptorIntoRepository(vvu,acd,pc);
+		
+		replaceAlphaCardDescriptor(ac, acd);
+					
+		if(pc == true) {
+			propagateAdornmentSchemaChange(cae, craPayload, updateServiceSender, LOGGER);
+		}
+		retract(cae);
+end
+
+rule "Handle participant join"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		acs: ArrayList() from collect (AlphaCardDescriptor())
+		pje : ParticipantJoinEvent()
+	then 
+		LOGGER.finer( "RULE NAME: \"Handle participant join");
+		
+		List<ChangePayloadEvent> list = pje.getKnownAlphaCards();
+		for(ChangePayloadEvent cpe : list){
+			#LOGGER.finer(cpe.getAlphaCardID().toString());
+			insert(cpe);
+		}
+		
+		if(!pje.isAnswer()){
+			Iterator<AlphaCardDescriptor> it = acs.iterator();
+			ParticipantJoinEvent pj = new ParticipantJoinEvent();
+			pj.setAnswer(true);
+			while(it.hasNext()){
+				AlphaCardDescriptor next = it.next();
+				String id = next.getId().getCardID();
+				if(!(id.equals(CoordCardType.CRA.id()) || id.equals(CoordCardType.PSA.id()) || id.equals(CoordCardType.APA.id()))){
+					try{
+						Payload pl = hwf.loadPayload(next, new Payload());
+						ChangePayloadEvent cp = new ChangePayloadEvent(next.getId(),(Object)pl, next);
+						pj.getKnownAlphaCards().add(cp);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+				
+			}
+			pj.setPropagateChange(false);
+			propagateObjectUpdate(pj, craPayload, ovnFacade, LOGGER);
+		}
+		
+		retract(pje);		
+end

@@ -1,0 +1,47 @@
+#created on: Jul 3, 2010
+package other.alpha.props.rules
+
+#list any import classes here.
+import org.apache.log4j.Logger
+
+#declare any global variables here
+global Logger LOGGER
+
+# This rule is a proposal that can be used to meet certain application requirements, if needed 
+rule "Add payload to a content alphaCard and start with version control"
+	when
+		vvs : VerVarStoreImpl()
+		cpe : ChangePayloadEvent( acid : alphaCardID, o : obj, pc : propagateChange  )
+		ac : AlphaCard( id == acid )
+		eval(o instanceof Payload)
+	then 
+		LOGGER.finer( "RULE NAME: \"Add payload to a content alphaCard\" ");
+		
+		LOGGER.finer( "RULE NAME:++++++++++++++++++++++ SPType of AC: " + ac.getId().getCardID() + " " + ac.getSPType());
+		vvs.setSptype(ac.getSPType());
+		LOGGER.finer( "RULE NAME:++++++++++++++++++++++ SPType of vvs: " + vvs.getSptype());
+		
+		if(pc == false) {
+			vvs.setVersion(String.valueOf((Double.valueOf(ac.getVersion()).doubleValue() + 1)));
+			LOGGER.finer( "RULE NAME:++++++++++++++++++++++ PAYLOAD ADDED --> !!!NO!!! NEW VERSION OF (private) AC: " + ac.getId().getCardID());
+			LOGGER.finer( "RULE NAME:++++++++++++++++++++++ Version of vvs: (in peer)" + ac.getId().getCardID() + " " + vvs.getVersion());
+		} else {
+			modify(ac) { setVersion(String.valueOf((Double.valueOf(ac.getVersion()).doubleValue() + 1)))}
+			vvs.setVersion(ac.getVersion());
+			LOGGER.finer( "RULE NAME:++++++++++++++++++++++ PAYLOAD ADDED --> NEW VERSION OF AC: " + ac.getId().getCardID());
+			LOGGER.finer( "RULE NAME:++++++++++++++++++++++ Version of vvs: " + ac.getId().getCardID() + " " + vvs.getVersion());
+		}
+
+		vvs.putPayload(acid, (Payload) o);
+		
+		if(!ac.isVersioning()) {
+			ac.setVersioning(true);
+		}
+		
+		if(pc == true) {
+			cpe.setPropagateChange(false);
+			propagatePayloadChange(cpe, drools.getWorkingMemory());
+		}
+		
+		retract(cpe);
+end

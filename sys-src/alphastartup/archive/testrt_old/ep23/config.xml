@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <epId>ep23</epId>
+    <name>00000000</name>
+    <currentUser>
+        <ip>192.168.0.4</ip>
+        <name>House</name>
+    </currentUser>
+</config>

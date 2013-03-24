@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- http://logback.qos.ch/manual/configuration.html#syntax -->
+	<define name="alphaEpisode" class="alpha.logging.RuntimeJarnamePropertyDefiner" />
+	<define name="alphaStartupType" class="alpha.logging.RuntimeStartupTypePropertyDefiner" />
+	<define name="appdefinedLogbasename" class="alpha.logging.RuntimeLogbasenamePropertyDefiner" />
+	<contextName>alpha-Flow</contextName>
+
+	<!-- using the ${alphaStartupType} with conditional processing (http://logback.qos.ch/manual/configuration.html#conditional) 
+		would require Janino (http://mvnrepository.com/artifact/org.codehaus.janino/janino/) 
+		which is another ~600KB -->
+
+	<appender name="FILEALPHA" class="ch.qos.logback.core.FileAppender">
+		<file>${appdefinedLogbasename}-alpha.log</file>
+		<encoder>
+			<!-- http://logback.qos.ch/manual/layouts.html -->
+			<pattern>%date{ISO8601} %contextName %level [%thread] [%logger:%line]
+				%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILETHIRDPARTY" class="ch.qos.logback.core.FileAppender">
+		<file>${appdefinedLogbasename}-3rdParty.log</file>
+		<encoder>
+			<pattern>%date{ISO8601} %level [%thread] [%logger:%line]
+				%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{ISO8601} %level [%thread] [%logger:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- ALPHA: named logger -->
+
+	<logger name="alphaprops-rules" level="info" additivity="false">
+		<!-- additivity flag set to false such that its logging output will be 
+			sent to the appender named FILEALPHA but not to any appender attached higher 
+			in the hierarchy -->
+		<appender-ref ref="FILEALPHA" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<!-- ALPHA: package based -->
+
+	<logger name="alpha" level="info" additivity="false">
+		<!-- additivity flag set to false such that its logging output will be 
+			sent to the appender named FILEALPHA but not to any appender attached higher 
+			in the hierarchy -->
+		<appender-ref ref="FILEALPHA" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="alpha.props" level="info" additivity="false">
+		<appender-ref ref="FILEALPHA" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="alpha.offsync.time" level="info" additivity="false">
+		<appender-ref ref="FILEALPHA" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="alpha.editor.panels" level="info" additivity="false">
+		<appender-ref ref="FILEALPHA" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+
+	<!-- ALL 3rd PARTPY MODULES should not do any print out with these settings! -->
+
+	<logger name="org.springframework" level="warn" additivity="false">
+		<appender-ref ref="FILETHIRDPARTY" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<logger name="org.drools" level="warn" additivity="false">
+		<appender-ref ref="FILETHIRDPARTY" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="uk.org.lidalia.sysoutslf4j" level="error"
+		additivity="false">
+		<appender-ref ref="FILETHIRDPARTY" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<root level="warn">
+		<appender-ref ref="FILETHIRDPARTY" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

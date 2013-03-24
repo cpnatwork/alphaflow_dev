@@ -1,0 +1,72 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+    <id>alphomatic</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+
+</assembly>
+
+<!-- Perspectice: Top-Level-Module -->
+<!-- USING unpacked CLASSES inside the one-jar -->
+<!--
+  <includeBaseDirectory>false</includeBaseDirectory>
+    <moduleSets>
+        <moduleSet>
+            <binaries>
+                <dependencySets>
+                    <dependencySet>
+                        <unpack>true</unpack>
+                                                <outputDirectory>/</outputDirectory>
+                                                <scope>runtime</scope>
+                    </dependencySet>
+                </dependencySets>
+                <unpack>true</unpack>
+                <outputDirectory>/</outputDirectory>
+            </binaries>
+        </moduleSet>
+    </moduleSets>
+    <dependencySets>
+        <dependencySet>
+            <unpack>true</unpack>
+            <outputDirectory>/</outputDirectory>
+                        <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.outputDirectory}</directory>
+    </fileSet>
+  </fileSets>
+-->
+
+
+<!-- Perspectice: Top-Level-Module -->
+<!-- USING JARs inside the one-jar -->
+<!--
+  <includeBaseDirectory>false</includeBaseDirectory>
+    <moduleSets>
+        <moduleSet>
+            <binaries>
+                <dependencySets>
+                    <dependencySet>
+                        <unpack>false</unpack>
+                                                <outputDirectory>lib</outputDirectory>
+                                                <scope>runtime</scope>
+                    </dependencySet>
+                </dependencySets>
+                <unpack>false</unpack>
+                <outputDirectory>lib</outputDirectory>
+            </binaries>
+        </moduleSet>
+    </moduleSets>
+    <dependencySets>
+        <dependencySet>
+            <unpack>false</unpack>
+            <outputDirectory>lib</outputDirectory>
+                        <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+-->

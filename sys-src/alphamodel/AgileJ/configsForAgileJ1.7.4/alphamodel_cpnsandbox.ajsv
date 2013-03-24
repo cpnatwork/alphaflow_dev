@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--AgileJ Ltd. (http://www.agilej.com)-->
+<ajsv>
+    <diagram style="cpnDefaultStyle" version="1.7.4.v20110506-1155">
+        <switch switchID="howToShowDependenciesOptions" switchValue="straight"/>
+        <switch switchID="hidePublicFieldsOption" switchValue="show"/>
+        <switch switchID="hidePackageFieldsOption" switchValue="hide"/>
+        <switch switchID="hidePrivateFieldsOption" switchValue="hide"/>
+        <switch switchID="hideProtectedFieldsOption" switchValue="show"/>
+        <switch switchID="howToShowFieldLinesOptions" switchValue="straight"/>
+        <switch switchID="howToShowInheritanceOptions" switchValue="straight"/>
+        <class className="alpha.model.identification.AlphaCardID" project="alphamodel" xLocation="1551" yLocation="-47"/>
+        <class className="alpha.model.AlphaCardDescriptor" project="alphamodel" xLocation="1909" yLocation="-51"/>
+        <class className="alpha.model.AlphaDoc" project="alphamodel" xLocation="1272" yLocation="-40"/>
+        <class className="alpha.model.adornment.AdornmentDataType" project="alphamodel" xLocation="1998" yLocation="-330"/>
+        <class className="alpha.model.adornment.AdornmentEnumRange" project="alphamodel" xLocation="2748" yLocation="-657"/>
+        <class className="alpha.model.adornment.AdpAdornment" project="alphamodel" xLocation="2772" yLocation="-335"/>
+        <class className="alpha.model.adornment.AdpEnum" project="alphamodel" xLocation="2248" yLocation="-683"/>
+        <class className="alpha.model.adornment.PrototypedAdornment" project="alphamodel" xLocation="2857" yLocation="51"/>
+        <class className="alpha.model.apa.APAPayload" project="alphamodel" xLocation="2719" yLocation="492"/>
+        <class className="alpha.model.cra.CRAPayload" project="alphamodel" xLocation="2139" yLocation="474"/>
+        <class className="alpha.model.cra.Contributor" project="alphamodel" xLocation="1926" yLocation="811"/>
+        <class className="alpha.model.cra.NodeID" project="alphamodel" xLocation="2579" yLocation="823"/>
+        <class className="alpha.model.cra.ParticipantNode" project="alphamodel" xLocation="2241" yLocation="814"/>
+        <class className="alpha.model.psa.PSAPayload" project="alphamodel" xLocation="1654" yLocation="493"/>
+        <class className="alpha.model.psa.AlphaCardRelationship" project="alphamodel" xLocation="1302" yLocation="735"/>
+        <class className="alpha.model.psa.AlphaCardRelationshipType" project="alphamodel" xLocation="1362" yLocation="875"/>
+        <class className="alpha.model.payload.Payload" project="alphamodel" xLocation="2187" yLocation="282"/>
+    </diagram>
+</ajsv>

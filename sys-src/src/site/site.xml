@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="alphflow">
+
+	<skin>
+		<!--
+			<groupId>org.apache.maven.skins</groupId>
+			<artifactId>maven-default-skin</artifactId>
+			<version>1.1</version>
+		-->
+		
+			<groupId>org.apache.maven.skins</groupId>
+			<artifactId>maven-stylus-skin</artifactId>
+			<version>1.4</version>
+		
+		<!--
+			<groupId>org.apache.maven.skins</groupId>
+			<artifactId>maven-application-skin</artifactId>
+			<version>1.0</version>
+		-->
+	</skin>
+	
+	<bannerLeft>
+		<name>&alpha;-Flow</name>
+		<src>images/logo.png</src>
+		<href>http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/alphaFlow/index.ushtml
+		</href>
+	</bannerLeft>
+
+	<body>
+		<links>
+			<item name="ProMed"
+				href="http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/index.ushtml" />
+		</links>
+
+		<menu ref="parent" />
+		<menu ref="modules" />
+		<menu ref="reports" />
+		<menu name="Links">
+			<item name="Site: &alpha;-Docs" href="http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/umbrella-mvn-site/alphaconfigcore/alphaconfigfull/alphabuildhub/index.html" />
+			<item name="Site: Hydra" href="http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/umbrella-mvn-site/alphaconfigcore/hydra/index.html" />
+			<item name="Site: &alpha;-Forms" href="http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/umbrella-mvn-site/alphaconfigcore/alphaforms/index.html" />
+			<item name="Site: ProMed Umbrella" href="http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/umbrella-mvn-site/alphaconfigcore/promed-umbrella/index.html" />
+			<item name="&alpha;-Flow Project Description"
+				href="http://www6.informatik.uni-erlangen.de/EN/research/projects/promed/alphaFlow/index.ushtml" />
+			<item name="&alpha;-Flow Wiki [internal]" href="https://promed.wiki6.informatik.uni-erlangen.de/" />
+		</menu>
+	</body>
+
+</project>

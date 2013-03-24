@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<craPayload>
+    <cra>true</cra>
+    <tsa>false</tsa>
+    <LoParticipants>
+	<subject>    
+	    <institution>MASH</institution>
+            <role>foo</role>
+	    <actor>House</actor>
+	</subject>
+	<node>
+	    <host>trajan</host>
+	    <ip>192.168.0.4</ip>
+	    <port>12345</port>
+	</node>
+    </LoParticipants>
+    <LoParticipants>
+	<subject>    
+	    <institution>MASH</institution>
+            <role>foo</role>
+	    <actor>House</actor>
+	</subject>
+	<node>
+	    <host>localhost</host>
+	    <ip>192.168.0.4</ip>
+	    <port>12346</port>
+	</node>
+    </LoParticipants>
+</craPayload>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>promed</groupId>
+		<artifactId>alphaconfigfull</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../alphaconfigfull</relativePath>
+	</parent>
+
+	<artifactId>alphabuildhub</artifactId>
+
+	<packaging>pom</packaging>
+	<name>alpha-Doc Build-Hub (Build Delegation)</name>
+
+	<description>alpha-Flow is based on a document-oriented process
+		paradigm and enables process support in heterogeneous and
+		inter-institutional scenarios.</description>
+
+	<modules>
+		<module>../alphamodel</module>
+		<module>../alphafacades</module>
+
+		<module>../alphacommons-base</module>
+
+		<module>../alphavvs</module>
+		<module>../alphaadaptive</module>
+
+		<module>../alphacommons-drools</module>		
+		<module>../alphaovernet</module>
+		<module>../alphaoffsync</module>
+		<module>../alphaprops</module>
+		
+		<module>../alphabulletin</module>
+		<module>../alphatemplates</module>
+		<!--<module>../alphacdm</module>-->
+		
+		<module>../alphaeditor</module>
+		<module>../alphainjector</module>
+		<module>../alphadoyen</module>
+
+		<module>../alphastartup</module>
+	</modules>
+
+</project>

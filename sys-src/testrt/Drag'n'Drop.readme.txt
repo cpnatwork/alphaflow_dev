@@ -1,0 +1,9 @@
+Bitte beachten Sie folgenden wichtigen Hinweis:
+
+Bitte überprüfen Sie vor Ausführung der Registrierungsdatei unbedingt, 
+ob der Filetype 'jarfile' in der Zeile
+   [HKEY_CLASSES_ROOT\jarfile\shellex\DropHandler]
+bei Ihnen in der Registrierungsdatenbank genau so geschrieben wird!
+
+Falls nicht, ersetzen Sie bitte 'jarfile' durch die Schreibweise, die
+Sie in Ihrer Registrierungsdatenbank vorfinden.

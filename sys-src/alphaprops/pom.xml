@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>promed</groupId>
+		<artifactId>alphaconfigfull</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../alphaconfigfull</relativePath>
+	</parent>
+
+	<artifactId>alphaprops</artifactId>
+	<name>alpha-Props</name>
+
+	<properties>
+		<!-- special test ignore for alphaprops (alpha-Props) -->
+		<!-- http://www.inze.be/andries/2011/05/11/maven-difference-between-dskiptests-and-dmaven-test-skiptrue/ -->
+		<skipTests>true</skipTests>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+	</properties>
+
+	<dependencies>
+		<!-- Related alpha Projects -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphamodel</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphafacades</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphacommons-base</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphavvs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphaadaptive</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphaovernet</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphaoffsync</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>alphadoyen</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- 3rd PARTY -->
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-core</artifactId>
+			<version>${lib.drools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-compiler</artifactId>
+			<version>${lib.drools.version}</version>
+			<exclusions>
+				<!--
+					needs JDT (org.eclipse.jdt:core) to 'JavaDialectConfiguration:java'
+				-->
+				<exclusion>
+					<groupId>janino</groupId>
+					<artifactId>janino</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-transformer-jaxb</artifactId>
+			<version>${lib.drools.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-xjc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- For Drools Logger -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>${lib.xstream.version}</version>
+		</dependency>
+		
+		<!-- LOGGING -->
+		<!-- the slf4j jars -->
+		<!-- (API package required for PropertyDefiner (extends PropertyDefinerBaseBase) -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${lib.slf4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<!-- (TRACE �) DEBUG � INFO � WARN � ERROR � FATAL -->
+			<!-- no activation in the code necessary -->
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${lib.slf4j.version}</version>
+		</dependency>
+
+		<!-- ************************ -->
+		<!-- LOGGING (implementation) -->
+		<!-- ************************ -->
+		<!-- the slf4j implementation -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${lib.logback.version}</version>
+		</dependency>
+		
+	</dependencies>
+
+</project>

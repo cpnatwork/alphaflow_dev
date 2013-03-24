@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<craPayload>
+    <cra>true</cra>
+    <tsa>false</tsa>
+    <LoParticipants>
+        <institutionID>ep23</institutionID>
+        <roleID>1456435634654</roleID>
+        <actorID>1456435634654</actorID>
+        <nodeID>1456435634654</nodeID>
+    </LoParticipants>
+</craPayload>

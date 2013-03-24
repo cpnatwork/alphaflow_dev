@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>promed</groupId>
+		<artifactId>alphaconfigcore</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../alphaconfigcore</relativePath>
+	</parent>
+
+	<artifactId>alphaconfigfull</artifactId>
+
+	<packaging>pom</packaging>
+	<name>alpha-Config Full (Extended Dependencies)</name>
+
+	<description>The alpha-Config Full includes dependencies to common 
+	libraries like Joda Time, common-lang/common-io, and Spring Context)</description>
+
+	<dependencies>
+
+		<!-- Extended Functionality (e.g. for String) -->
+		<!-- (copied StringUtil.join(..) into JLabelTransferHandler)
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${lib.commons-lang.version}</version>
+		</dependency>
+		 -->
+
+		<!-- The one and only Java lib for handling FILES -->
+		<!-- (copied FileUtils.copyFile(..) into AlphaPropsFacadeImpl) -->
+		<!-- (copied IOUtils.toByteArray(..) into Injector) -->
+		<!-- 
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${lib.commons-io.version}</version>
+		</dependency>
+		-->
+		 
+
+		<!-- The one and only Java lib for handling TIME -->
+		<!-- (The drools-core already has depend. on joda-time!) -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${lib.joda-time.version}</version>
+		</dependency>
+
+		<!-- INFO: Application Context (depends on spring-core, spring-expression, 
+			spring-aop, spring-beans) This is the central artifact for Spring's Dependency 
+			Injection Container and is generally always defined. -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${lib.spring.version}</version>
+
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<!-- ********** -->
+		<!-- Scope TEST -->
+		<!-- ********** -->
+
+		<!-- INFO: Support for testing Spring applications with tools such as JUnit 
+			and TestNG. This artifact is generally always defined with a 'test' scope 
+			for the integration testing framework and unit testing stubs. Features for 
+			example: Spring IoC container caching between test case execution. [Test 
+			classes extend AbstractDependencyInjectionSpringContextTests and implement 
+			getConfigLocations() method.][Look at: ReflectionTestUtils in org.springframework.test.util] 
+			http://static.springsource.org/spring/docs/2.0.x/reference/testing.html -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${lib.spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>

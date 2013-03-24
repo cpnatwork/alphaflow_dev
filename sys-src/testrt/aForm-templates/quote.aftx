@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<alphaFormTemplates>
+  <widgetTemplate name="Contact Information">
+    <widget ui="alpha.forms.widget.view.GroupUI" title="Contact Information" height="110" name="contactInfo" width="450" type="alpha.forms.widget.model.Group" border="TITLED" y="0" x="0">
+      <children>
+        <widget ui="alpha.forms.widget.view.AlphaListUI" height="27" showLabel="LEFT" name="salutation" width="120" label="Name" type="alpha.forms.widget.model.AlphaList" isMultiselect="false" isEditable="false" y="20" x="10">
+          <event name="onSelectionChanged"/>
+          <items>
+            <item id="m" selected="false">Mr.</item>
+            <item id="f" selected="false">Mrs.</item>
+          </items>
+        </widget>
+        <widget ui="alpha.forms.widget.view.TextFieldUI" height="22" visible="true" showLabel="NONE" name="name" width="310" label="TextField1" type="alpha.forms.widget.model.TextField" y="20" x="130">
+          <value/>
+        </widget>
+        <widget ui="alpha.forms.widget.view.TextFieldUI" height="22" visible="true" showLabel="LEFT" name="phone" width="430" label="Phone" type="alpha.forms.widget.model.TextField" y="50" x="10">
+          <value/>
+        </widget>
+        <widget ui="alpha.forms.widget.view.TextFieldUI" height="22" visible="true" showLabel="LEFT" name="email" width="430" label="Email" type="alpha.forms.widget.model.TextField" y="80" x="10">
+          <value/>
+        </widget>
+      </children>
+    </widget>
+  </widgetTemplate>
+  <widgetTemplate name="CPU">
+    <widget ui="alpha.forms.widget.view.GroupUI" title="CPU" height="60" name="cpu" width="450" type="alpha.forms.widget.model.Group" border="TITLED" y="10" x="0">
+      <children>
+        <widget ui="alpha.forms.widget.view.AlphaListUI" height="27" showLabel="LEFT" name="model" width="170" label="Model" type="alpha.forms.widget.model.AlphaList" isMultiselect="false" isEditable="false" y="20" x="10">
+          <event name="onSelectionChanged">
+            <action name="action_693526173"><![CDATA[importPackage(Packages.alpha.forms.widget.model);
+cpu$rate.getItems().clear();
+switch(String(this.getSelectedItem().getId())) {
+	case "inti5":
+	cpu$rate.addItem(new AlphaList.ListItem("2700", "2.7"));
+	cpu$rate.addItem(new AlphaList.ListItem("3000", "3.0"));
+	cpu$rate.addItem(new AlphaList.ListItem("3333", "3.3"));
+	break;
+	case "inti7":
+	cpu$rate.addItem(new AlphaList.ListItem("2800", "2.8"));
+	cpu$rate.addItem(new AlphaList.ListItem("3400", "3.4"));
+	break;
+	case "amda4":
+	cpu$rate.addItem(new AlphaList.ListItem("2500", "2.5"));
+	cpu$rate.addItem(new AlphaList.ListItem("2700", "2.7"));
+	break;
+	case "amda6":
+	cpu$rate.addItem(new AlphaList.ListItem("2600", "2.6"));
+	break;
+}
+cpu$rate.getUi().doLayout();]]></action>
+          </event>
+          <items>
+            <item id="inti5" selected="false">Intel Core i5</item>
+            <item id="inti7" selected="false">Intel Core i7</item>
+            <item id="amda4" selected="false">AMD A4</item>
+            <item id="amda6" selected="false">AMD A6</item>
+          </items>
+        </widget>
+        <widget ui="alpha.forms.widget.view.AlphaListUI" height="27" showLabel="RIGHT" name="rate" width="140" label="GHz" type="alpha.forms.widget.model.AlphaList" isMultiselect="false" isEditable="false" y="20" x="180">
+          <event name="onSelectionChanged"/>
+          <items/>
+        </widget>
+      </children>
+    </widget>
+  </widgetTemplate>
+  <widgetTemplate name="HDRAM">
+    <widget ui="alpha.forms.widget.view.GroupUI" title="HD + RAM" height="150" name="ramhd" width="450" type="alpha.forms.widget.model.Group" border="TITLED" y="80" x="0">
+      <children>
+        <widget ui="alpha.forms.widget.view.OptionUI" height="120" name="ram" layout="VERTICAL" width="100" type="alpha.forms.widget.model.Option" isMultiselect="false" y="20" gap="5" x="10">
+          <options>
+            <option value="false">1 GB RAM</option>
+            <option value="true">2 GB RAM</option>
+            <option value="false">4 GB RAM</option>
+            <option value="false">8 GB RAM</option>
+          </options>
+        </widget>
+        <widget ui="alpha.forms.widget.view.OptionUI" height="120" name="hd" layout="VERTICAL" width="200" type="alpha.forms.widget.model.Option" isMultiselect="false" y="20" gap="5" x="150">
+          <options>
+            <option value="true">320 GB HD</option>
+            <option value="false">512 GB HD</option>
+            <option value="false">1 TB HD</option>
+            <option value="false">2 TB HD</option>
+          </options>
+        </widget>
+      </children>
+    </widget>
+  </widgetTemplate>
+</alphaFormTemplates>

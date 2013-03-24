@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>promed</groupId>
+		<artifactId>alphaconfigcore</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>alphaconfigcore</relativePath>
+	</parent>
+
+	<artifactId>promed-umbrella</artifactId>
+	<name>Umbrella Module of ProMed projects</name>
+
+	<packaging>pom</packaging>
+
+	<modules>
+		<!-- Tacit infrastructure. Only included for these reasons: 1) needs to 
+			be deployed, 2) needed for site/site-deploy, 3) I want them also to be imported 
+			into Eclipse for convenience. (PS: it does not matter in any ways that alphaconfigcore 
+			is now the parent of promed-umbrella and also a sub-delegated module) -->
+		<module>alphaconfigbase</module>
+		<module>alphaconfigcore</module>
+		<module>alphaconfigfull</module>
+		<!-- The actual subprojects: -->
+		<module>hydra-buildhub</module>
+		<module>alphaforms</module>
+		<module>alphabuildhub</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${plugin.checkstyle.version}</version>
+				<configuration>
+					<configLocation>${project.basedir}/src/main/resources/alpha/checkstyle.xml</configLocation>
+					<suppressionsLocation>${project.basedir}/src/main/resources/alpha/suppressions.xml</suppressionsLocation>
+				</configuration>
+			</plugin>
+
+			<!-- ******************************************************************* 
+					* http://blog.xebia.com/2007/01/16/reporting-on-a-multi-module-project-with-maven2/ 
+					* The main problems I see for aggregating reports is the fact that * the 
+					parent report will be generated before the child reports * have been generated. 
+					(Thus, run the 'site:site' twice!!) ******************************************************************* -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${plugin.site.version}</version>
+				<configuration>
+					<siteDirectory>${project.basedir}\src\site</siteDirectory>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+
+
+
+	</build>
+
+</project>

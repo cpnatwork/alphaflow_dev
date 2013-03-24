@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="InstallationOverride.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MonitorName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PrintPut Monitor</Value>
+    </Setting>
+    <Setting Name="PrinterPortName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PrintPutPort:</Value>
+    </Setting>
+    <Setting Name="PrinterName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PrintPut</Value>
+    </Setting>
+    <Setting Name="PrinterDriverName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PrintPutDriver</Value>
+    </Setting>
+    <Setting Name="PrintPutExeFileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PrintPut.exe</Value>
+    </Setting>
+    <Setting Name="RedMon32FileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">redmonnt.dll</Value>
+    </Setting>
+    <Setting Name="RedMon64FileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">redmonnt-x64.dll</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

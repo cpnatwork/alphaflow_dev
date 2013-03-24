@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- http://logback.qos.ch/manual/configuration.html#syntax -->
+	<contextName>alpha-Flow</contextName>
+	<appender name="FILEALPHA" class="ch.qos.logback.core.FileAppender">
+		<file>alphaflow.log</file>
+		<encoder>
+			<!-- http://logback.qos.ch/manual/layouts.html -->
+			<pattern>%date{ISO8601} %contextName %level [%thread] [%logger:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="FILEPUDDLE" class="ch.qos.logback.core.FileAppender">
+		<file>alpha3rdParty.log</file>
+		<encoder>
+			<pattern>%date{ISO8601} %level [%thread] [%logger:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="alpha" level="debug" additivity="false">
+		<!--
+			additivity flag set to false such that its logging output will be
+			sent to the appender named FILEALPHA but not to any appender attached
+			higher in the hierarchy
+		-->
+		<!-- <appender-ref ref="STDOUT" /> -->
+		<appender-ref ref="FILEALPHA" />
+	</logger>
+	
+	<logger name="org.springframework" level="warn" additivity="false">
+		<appender-ref ref="FILEPUDDLE" />
+	</logger>
+	<logger name="org.drools" level="warn" additivity="false">
+		<appender-ref ref="FILEPUDDLE" />
+	</logger>
+	<logger name="uk.org.lidalia.sysoutslf4j" level="error" additivity="false">
+		<appender-ref ref="FILEPUDDLE" />
+	</logger>
+
+	<root level="info">
+		<appender-ref ref="FILEPUDDLE" />
+	</root>
+</configuration>

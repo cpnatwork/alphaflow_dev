@@ -1,0 +1,5 @@
+System.out.println(alpha.model.AlphaCard.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+Syntax error on token "class", Identifier expectedCannot invoke getClass() on the primitive type intSystem.out.println((Integer.valueOf("3") + 4).getClass().getName());
+
+Integer.valueOf("3") + 4;

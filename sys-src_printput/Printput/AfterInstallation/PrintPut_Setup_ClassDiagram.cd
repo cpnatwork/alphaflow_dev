@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="InstallationOverride.EnvironmentCheck">
+    <Position X="0.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAgAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EnvironmentCheck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InstallationOverride.EnvironmentCheckPinvoke">
+    <Position X="3" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAEAgAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>EnvironmentCheckPinvoke.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InstallationOverride.OverrideInstaller">
+    <Position X="5.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAACAAAAAGAACAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Installer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InstallationOverride.PrinterMonitorInstaller">
+    <Position X="0.75" Y="2.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAgkEBIAAAQIADAACAmBEBIABgQQgAQAAgA=</HashCode>
+      <FileName>PrinterMonitorInstaller.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InstallationOverride.PrinterMonitorInstallerPInvoke">
+    <Position X="3" Y="2.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="InstallationOverride.PrinterMonitorInstallerPInvoke.MONITOR_INFO_2" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="InstallationOverride.PrinterMonitorInstallerPInvoke.PRINTER_INFO_2" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="InstallationOverride.PrinterMonitorInstallerPInvoke.PORT_INFO_2" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="InstallationOverride.PrinterMonitorInstallerPInvoke.DRIVER_INFO_2" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="InstallationOverride.PrinterMonitorInstallerPInvoke.PRINTER_DEFAULTS" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="InstallationOverride.PrinterMonitorInstallerPInvoke.PrinterEnumFlags" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="InstallationOverride.PrinterMonitorInstallerPInvoke.PortType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PrinterMonitorInstallerPInvoke.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAQAAIMEAAAAAAACQIIAggAAEACBAAAAAAAiIAABA=</HashCode>
+      <FileName>PrinterMonitorInstallerPInvoke.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InstallationOverride.Properties.Settings">
+    <Position X="5.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAIDAAAACBAAAAAgAQAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

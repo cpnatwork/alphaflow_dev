@@ -1,0 +1,716 @@
+// AgileJ Configuration Language. File created Fri Jun 24 15:15:15 CEST 2011
+
+// Edit this file to extend the standard configuration with your own custom diagram styles
+// Hints: 
+//	Ctrl+SPACE for completion options
+//	Ctrl+Shift+F to format
+//	Ctrl Click to follow references
+//	Use the Eclipse Outline view for tree of elements
+//	Refer to the standard configuration below which contains at least one example of every type of element
+
+DiagramStyle cpnDefaultStyle description "selects members by visibility" extends defaultDiagramStyle {
+	shows type titles unqualified ;
+	// specific types
+	hides types in javaRuntime ;
+	hides types in allJAXBObjectFactories ;
+	hides types in allUnitTests ;
+	// specific methods
+	hides methods in getterMethods;
+	hides methods in getterMethodsOfBoolean;
+	hides methods in setterMethods;
+	hides methods in overridingMethods;
+	hides methods in onlyContructorMethods;
+	hides methods in objectMethods; // somehow does not work 
+	hides methods in equalsMethod;
+	// specific fields 
+	hides fields in allLoggerFields;
+	// general
+	hides types in innerClasses ;
+	hides types in protectedTypes ;
+	hides types in privateTypes ;
+	hides types in packageDefaultTypes ;
+	hides methods in protectedMethods ;
+	hides methods in privateMethods ;
+	hides methods in packageDefaultMethodsOfClasses ;
+	// general but configurable
+	hides fields in publicFields if hidePublicFieldsOption matches "hide";
+	hides fields in protectedFields if hideProtectedFieldsOption matches "hide";
+	hides fields in privateFields if hidePrivateFieldsOption matches "hide";
+	hides fields in packageDefaultFields if hidePackageFieldsOption matches "hide" ;
+}
+
+
+
+DiagramStyle cpnTorsoModel description "hides ..." extends defaultDiagramStyle {
+	//canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	shows type titles unqualified ;
+	hides types in javaRuntime ;
+	hides types in allJAXBObjectFactories ;
+	hides types in allUnitTests ;
+	// From: DiagramStyle hideAllMembersDiagramStyle
+	// hides types in innerClasses ;
+	hides methods in allMethods ;
+	hides fields in allFields ;	
+}
+
+BatchContentDirector cpnPackageBatch {
+	seed type selector handWrittenMainTypes ( ) ;
+	population type selector handWrittenMainTypes ( ) ;
+	create by package {
+		use cpnTorsoModel ();
+	}
+}
+
+OptionsSwitch hidePackageFieldsOption prompt "package field visibility" single "show" "hide" ;
+OptionsSwitch hidePrivateFieldsOption prompt "private field visibility" single "show" "hide" ;
+OptionsSwitch hideProtectedFieldsOption prompt "protected field visibility" single "show" "hide" ;
+OptionsSwitch hidePublicFieldsOption prompt "public field visibility" single "show" "hide" ;
+
+TypeSelector handWrittenMainTypes description "all Types ending on Test" stereotype "Maven Main Types" {
+	types excluded from generatedTypes & excluded from allUnitTests & included in sourceTypes ;
+}
+
+TypeSelector allJAXBObjectFactories description "all JAXB ObjectFactory types" {
+	types named "OBjectFactory" ;
+}
+
+TypeSelector allUnitTests description "all Types ending on Test" stereotype "Unit Test" {
+	types named "*Test" ;
+} 
+
+FieldSelector allLoggerFields {
+	fields of type defaultLoggerTypes;
+}
+
+TypeSelector defaultLoggerTypes description "all Logger types" stereotype "Logger" {
+	types named "Logger" ;
+} 
+
+MethodSelector getterMethodsOfBoolean {
+	methods named "is*" & returning booleanType;
+}
+
+TypeSelector booleanType description "Just boolean itself" {
+	types named "boolean" ;  
+}
+
+MethodSelector equalsMethod {
+	methods named "equals" ;
+}
+
+MethodSelector objectMethods {
+	methods declared by justObject;
+}
+
+MethodSelector packageDefaultMethodsOfClasses {
+	methods excluded from publicMethods & excluded from protectedMethods & excluded from privateMethods & declared by allClasses;
+}
+
+//MethodSelector singletonAccessor {
+//	methods returning matching declarer & named "getInstance" & modified static;
+//}
+
+
+
+//////////////////////////////////////////////////////////////////////
+// START OF STANDARD CONFIGURATION - DO NOT EDIT BELOW THIS MESSAGE //
+//////////////////////////////////////////////////////////////////////
+
+PatternSwitch namePatternSwitch prompt "name pattern" ;
+
+TypeSelector allTypes description "all types, no filtering" {
+	types named "*" ;
+}
+
+TypeSelector allInterfaces description "all types which are interfaces" {
+	interfaces named "*" ;
+}
+
+TypeSelector allClasses description "all types excluding interfaces" {
+	types excluded from allInterfaces;
+}
+
+TypeSelector javaRuntime description "all types in java.* and javax.* packages" stereotype "JRE" {
+	types from bytecode & in package "java*" ;
+}
+
+MethodSelector allMethods {
+	methods named "*" ;
+}
+
+MethodSelector matchNamePatternMethods {
+	methods named namePatternSwitch ;
+}
+
+FieldSelector allFields {
+	fields named "*" ;
+}
+
+FieldSelector matchNamePatternFields {
+	fields named namePatternSwitch ;
+}
+
+TypeSelector matchPatternTypes description "types whose name matches a pattern" {
+	types named namePatternSwitch ;
+}
+
+TypeSelector allTopLevelTypes description "all non-inner classes and interfaces" {
+	types top level types ;
+}
+
+TypeSelector innerClasses description "inner classes and interfaces" {
+	types excluded from allTopLevelTypes ;
+}
+
+FieldOrMethodDisplayStyle blackNormalFieldOrMethodDisplayStyle {
+	name TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+	type TextStyle ( Color ( normal 109 109 163 strong 62 62 145 ) italic ) ;
+	other TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+}
+
+FieldOrMethodDisplayStyle largerGreenFieldOrMethodDisplayStyle {
+	name TextStyle ( Color ( normal 102 118 72 strong 53 82 0 ) larger ) ;
+	type TextStyle ( Color ( normal 102 118 72 strong 53 82 0 ) larger ) ;
+	other TextStyle  ( Color ( normal 40 40 40 strong 0 0 0 ) larger )  ;
+}
+
+OptionsSwitch howToShowInheritanceOptions prompt "how to show inheritance lines" single "straight" "manhattan" "hidden" ;
+
+OptionsSwitch howToShowFieldLinesOptions prompt "how to show field lines" single "straight" "manhattan" "hidden" ;
+
+OptionsSwitch howToShowDependenciesOptions prompt "how to show dependencies" single "straight" "manhattan" "hidden" ;
+
+OptionsSwitch visibilityOptions prompt "member visibilities" multiple "public" "protected" "package - default" "private" ;
+
+// There has to be a DiagramStyle called 'defaultDiagramStyle'
+// This is the style which is used by default 
+DiagramStyle defaultDiagramStyle description "default standard diagram style" {
+	canvas Color ( normal 240 240 240 strong 255 255 255 ) ;
+	shows type titles unqualified ;
+	shows types in signatures as unqualified ;
+	shows exceptions as unqualified ;
+	shows parameter names ;
+	displays types in allTypes using yellowTypeDisplayStyle ;
+	displays fields in allFields using blackNormalFieldOrMethodDisplayStyle ;
+	displays methods in allMethods using blackNormalFieldOrMethodDisplayStyle ;
+	displays inheritance lines from allTypes to allInterfaces using LineStyle ( Color ( normal 109 109 163 strong 62 62 145 ) ) if howToShowInheritanceOptions matches "straight" ;
+	displays inheritance lines from allTypes to allClasses using LineStyle ( Color ( normal 102 118 72 strong 53 82 0 ) ) if howToShowInheritanceOptions matches "straight" ;
+	displays field lines from allFields to allTypes using LineStyle ( Color ( normal 163 109 109 strong 145 62 62 ) ) if howToShowFieldLinesOptions matches "straight" ;
+	displays dependency lines from allTypes to allTypes using LineStyle ( Color ( normal 40 40 40 strong 0 0 0 ) dotted ) if howToShowDependenciesOptions matches "straight" ;
+	displays inheritance lines from allTypes to allInterfaces using LineStyle ( Color ( normal 109 109 163 strong 62 62 145 ) manhattan ) if howToShowInheritanceOptions matches "manhattan" ;
+	displays inheritance lines from allTypes to allClasses using LineStyle ( Color ( normal 102 118 72 strong 53 82 0 ) manhattan ) if howToShowInheritanceOptions matches "manhattan" ;
+	displays field lines from allFields to allTypes using LineStyle ( Color ( normal 163 109 109 strong 145 62 62 ) manhattan ) if howToShowFieldLinesOptions matches "manhattan" ;
+	displays dependency lines from allTypes to allTypes using LineStyle ( Color ( normal 40 40 40 strong 0 0 0 ) dotted manhattan ) if howToShowDependenciesOptions matches "manhattan" ;
+}
+
+DiagramStyle standardColorsDiagramStyle description "green classes, blue interfaces, purple abstract, grayBytecode" extends defaultDiagramStyle {
+	displays types in bytecodeTypes using grayTypeDisplayStyle ;
+	displays types in interfaceTypes using blueTypeDisplayStyle ;
+	displays types in abstractTypes using purpleTypeDisplayStyle ;
+	displays types in allTypes using greenTypeDisplayStyle ;
+}
+
+DiagramStyle faintLines description "all lines in light gray"{
+	canvas Color ( normal 156 201 179 strong  216 255 236 ) ;
+	shows type titles unqualified ;
+	shows types in signatures as omitted ;
+	shows exceptions as omitted ;
+	omits parameter names ;
+	displays types in allTypes using yellowTypeDisplayStyle ;
+	displays fields in allFields using blackNormalFieldOrMethodDisplayStyle ;
+	displays methods in allMethods using blackNormalFieldOrMethodDisplayStyle ;
+	displays inheritance lines from allTypes to allTypes using LineStyle ( Color ( normal 220 220 240 strong 205 205 215 ) );
+	displays field lines from allFields to allTypes using LineStyle ( Color ( normal 220 220 240 strong 205 205 215 ) );
+}
+
+DiagramStyle justFieldsAndFieldLines description "displays only fields and field lines - inheritance lines faint" {
+	canvas Color ( normal 240 240 240  strong 255 255 255) ;
+	shows type titles unqualified ;
+	shows types in signatures as unqualified ;	
+	displays types in allTopLevelTypes using yellowTypeDisplayStyle ;
+	displays fields in allFields using blackNormalFieldOrMethodDisplayStyle ;
+	displays inheritance lines from allTypes to allTypes using LineStyle ( Color ( normal 220 220 240 strong 205 205 215 ) ) ;
+	displays field lines from allFields to allTypes using LineStyle ( Color ( normal 163 109 109 strong 145 62 62 ) manhattan ) if howToShowFieldLinesOptions matches "manhattan" ;
+	displays field lines from allFields to allTypes using LineStyle ( Color ( normal 163 109 109 strong 145 62 62 ) ) if howToShowFieldLinesOptions matches "straight" ;
+}
+
+DiagramStyle highlightInheritanceLines description "highlight inheritance by type name" extends faintLines {
+	displays inheritance lines from matchPatternTypes to allTypes using LineStyle ( Color ( normal 109 109 163 strong 62 62 145 ) ) ;
+	displays inheritance lines from allTypes to matchPatternTypes using LineStyle ( Color ( normal 109 109 163 strong 62 62 145 ) ) ;
+}
+
+DiagramStyle noMethodSignaturesDiagramStyle description "omits parameter types, parameter names and exception" extends defaultDiagramStyle {
+	shows types in signatures as omitted ;
+	shows exceptions as omitted ;
+	omits parameter names ;
+}
+
+TypeSelector publicTypes description "all inner types with visibility 'public' " {
+	types modified public & declared by allTypes ;
+}
+
+TypeSelector protectedTypes description "all types with visibility 'protected' " {
+	types modified protected & declared by allTypes ;
+}
+
+TypeSelector privateTypes description "all types with visibility 'private' " {
+	types modified private & declared by allTypes ;
+}
+
+TypeSelector packageDefaultTypes description "all types with visibility package - default " {
+	types excluded from publicTypes & excluded from protectedTypes & excluded from privateTypes & declared by allTypes ;
+}
+
+MethodSelector publicMethods {
+	methods modified public ;
+}
+
+MethodSelector protectedMethods {
+	methods modified protected ;
+}
+
+MethodSelector packageDefaultMethods {
+	methods excluded from publicMethods & excluded from protectedMethods & excluded from privateMethods ;
+}
+
+MethodSelector privateMethods {
+	methods modified private ;
+}
+
+FieldSelector publicFields {
+	fields modified public ;
+}
+
+FieldSelector protectedFields {
+	fields modified protected ;
+}
+
+FieldSelector privateFields {
+	fields modified private ;
+}
+
+FieldSelector packageDefaultFields {
+	fields excluded from publicFields & excluded from protectedFields & excluded from privateFields ;
+}
+
+DiagramStyle visibilityFilteringDiagramStyle description "selects members by visibility" extends defaultDiagramStyle {
+	displays types in publicTypes using yellowTypeDisplayStyle if visibilityOptions matches "public" ;
+	displays types in protectedTypes using yellowTypeDisplayStyle if visibilityOptions matches "protected" ;
+	displays types in privateTypes using yellowTypeDisplayStyle if visibilityOptions matches "private" ;
+	displays types in packageDefaultTypes using yellowTypeDisplayStyle if visibilityOptions matches "package - default" ;
+	hides types in innerClasses ;
+	displays methods in publicMethods using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "public" ;
+	displays methods in protectedMethods using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "protected" ;
+	displays methods in privateMethods using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "private" ;
+	displays methods in packageDefaultMethods using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "package - default" ;
+	hides methods in allMethods ;
+	displays fields in publicFields using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "public" ;
+	displays fields in protectedFields using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "protected" ;
+	displays fields in privateFields using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "private" ;
+	displays fields in packageDefaultFields using blackNormalFieldOrMethodDisplayStyle if visibilityOptions matches "package - default" ;
+	hides fields in allFields ;
+}
+
+FieldOrMethodDisplayStyle smallestFieldOrMethod {
+	name TextStyle ( Color ( normal 170 170 170 strong 153 153 153 ) smallest ) ;
+	type TextStyle ( Color ( normal 109 109 163 strong 62 62 145 ) smallest ) ;
+	other TextStyle ( Color ( normal 170 170 170 strong 153 153 153 ) smallest ) ;
+}
+
+DiagramStyle allMembersSmallest description "all members shown in smallest text size" extends defaultDiagramStyle {
+	displays fields in allFields using smallestFieldOrMethod ;
+	displays methods in allMethods using smallestFieldOrMethod ;
+}
+
+FieldOrMethodDisplayStyle normalGreenTypes {
+	name TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+	type TextStyle ( Color ( normal 42 118 0 strong 32 92 0 ) ) ;
+	other TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+}
+
+DiagramStyle showTypeNamesInGreen description "show all type names in signatures in green" extends defaultDiagramStyle {
+	displays fields in allFields using normalGreenTypes ;
+	displays methods in allMethods using normalGreenTypes ;
+}
+
+FieldOrMethodDisplayStyle normalRedTypes {
+	name TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+	type TextStyle ( Color ( normal 164 30 26 strong 138 25 22 ) ) ;
+	other TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+}
+
+FieldOrMethodDisplayStyle normalRedNames {
+	name TextStyle ( Color ( normal 164 30 26 strong 138 25 22 ) ) ;
+	type TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+	other TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) ) ;
+}
+
+DiagramStyle showTypeNamesInRed description "show all type names in signatures in red" extends defaultDiagramStyle {
+	displays fields in allFields using normalRedTypes ;
+	displays methods in allMethods using normalRedTypes ;
+}
+
+FieldOrMethodDisplayStyle normalGrayTypes {
+	name TextStyle ( Color ( normal 153 153 153 strong 127 127 127 ) ) ;
+	type TextStyle ( Color ( normal 153 153 153 strong 127 127 127 ) ) ;
+	other TextStyle ( Color ( normal 153 153 153 strong 127 127 127 ) ) ;
+}
+
+DiagramStyle showGrayFieldsAndMethods description "show all signatures in gray" extends allTypesGray {
+	displays fields in allFields using normalGrayTypes ;
+	displays methods in allMethods using normalGrayTypes ;
+}
+
+DiagramStyle showMatchingTypeNamesInRed description "show names in signatures which match a pattern in red" extends showGrayFieldsAndMethods {
+	displays fields in matchNamePatternFields using normalRedNames ;
+	displays methods in matchNamePatternMethods using normalRedNames ;
+}
+
+FieldOrMethodDisplayStyle largerFieldOrMethod {
+	name TextStyle ( Color ( normal 40 40 40 strong 0 0 0 ) larger )  ;
+	type TextStyle ( Color ( normal 109 109 163 strong 62 62 145 ) larger ) ;
+	other TextStyle  ( Color ( normal 40 40 40 strong 0 0 0 ) larger )  ;
+}
+
+DiagramStyle enlargeMethodsByPattern description "enlarges the text of methods matching a name pattern" extends allMembersSmallest {
+	displays methods in matchNamePatternMethods using largerFieldOrMethod ;
+}
+
+DiagramStyle enlargeFieldsByPattern description "enlarges the text of fields matching a name pattern" extends allMembersSmallest {
+	displays fields in matchNamePatternFields using largerFieldOrMethod ;
+}
+
+DiagramStyle allTypesBlue description "shows all types in blue" extends defaultDiagramStyle {
+	displays types in allTypes using blueTypeDisplayStyle ;
+}
+
+DiagramStyle allTypesPurple description "shows all types in purple" extends defaultDiagramStyle {
+	displays types in allTypes using purpleTypeDisplayStyle ;
+}
+
+DiagramStyle allTypesPink description "shows all types in pink" extends defaultDiagramStyle {
+	displays types in allTypes using pinkTypeDisplayStyle ;
+}
+
+DiagramStyle allTypesGreen description "shows all types in green" extends defaultDiagramStyle {
+	displays types in allTypes using greenTypeDisplayStyle ;
+}
+
+DiagramStyle allTypesGray description "shows all types in gray" extends defaultDiagramStyle {
+	displays types in allTypes using grayTypeDisplayStyle ;
+}
+
+DiagramStyle allTypesOrange description "shows all types in orange" extends defaultDiagramStyle {
+	displays types in allTypes using orangeTypeDisplayStyle ;
+}
+
+DiagramStyle highlightJreTypes description "highlights all jre types" extends allTypesGray {
+	displays types in javaRuntime using orangeTypeDisplayStyle ;
+}
+
+DiagramStyle showOnlyGetAndSet description "only shows get and set methods" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	displays methods in getterMethods using largerGreenFieldOrMethodDisplayStyle ;
+	displays methods in setterMethods using largerGreenFieldOrMethodDisplayStyle ;
+	hides methods in allMethods ;
+	hides fields in allFields ;
+}
+
+MethodSelector getterMethods {
+	methods named "get*" ;
+}
+
+MethodSelector setterMethods {
+	methods named "set*" ;
+}
+
+DiagramStyle hideGetSetDiagramStyle description "hide get and set methods" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	hides methods in getterMethods ;
+	hides methods in setterMethods ;
+}
+
+DiagramStyle hideConstructors description "hides constructors" extends defaultDiagramStyle {
+	hides methods in onlyContructorMethods ;
+}
+
+DiagramStyle hideAllMembersDiagramStyle description "hides fields, hide methods, hide inner classes" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	hides types in innerClasses ;
+	hides methods in allMethods ;
+	hides fields in allFields ;
+}
+
+DiagramStyle showPublicMembersOnly description "shows only public methods and fields" extends hideAllMembersDiagramStyle {
+	displays fields in publicFields using blackNormalFieldOrMethodDisplayStyle;
+	displays methods in publicMethods using blackNormalFieldOrMethodDisplayStyle;
+}
+
+DiagramStyle showPrivateMembersOnly description "shows only private methods and fields" extends hideAllMembersDiagramStyle {
+	displays fields in privateFields using blackNormalFieldOrMethodDisplayStyle;
+	displays methods in privateMethods using blackNormalFieldOrMethodDisplayStyle;
+}
+
+MethodSelector onlyContructorMethods {
+	constructors named "*" ;
+}
+
+DiagramStyle showOnlyConstructorsDiagramStyle description "shows only constructors" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	displays methods in onlyContructorMethods using blackNormalFieldOrMethodDisplayStyle ;
+	hides methods in allMethods ;
+	hides fields in allFields ;
+	hides types in innerClasses ;
+}
+
+TypeSelector bytecodeTypes description "all bytecode types" stereotype "bytecode" {
+	types from bytecode ;
+}
+
+DiagramStyle showBytecodeClassInWhiteDiagramStyle description "show bytecode classes in white" extends defaultDiagramStyle {
+	displays types in bytecodeTypes using grayTypeDisplayStyle ;
+}
+
+TypeSelector abstractTypes description "all abstract classes" stereotype "abstract" {
+	types modified abstract ;
+}
+
+DiagramStyle highlightAbstractClassesDiagramStyle description "show abstract classes in orange" extends allTypesGray {
+	displays types in abstractTypes using orangeTypeDisplayStyle ;
+}
+
+MethodSelector overridingMethods {
+	methods overriding ;
+}
+
+DiagramStyle hideOverridingMethodsDiagramStyle description "hide methods which override another method" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	hides methods in overridingMethods ;
+}
+
+MethodSelector synchronizedMethods {
+	methods modified synchronized ;
+}
+
+DiagramStyle showOnlySynchronizedMethodsDiagramStyle description "show only synchronized methods" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	displays methods in synchronizedMethods using blackNormalFieldOrMethodDisplayStyle ;
+	hides fields in allFields ;
+	hides methods in allMethods ;
+}
+
+DiagramStyle showOnlyOverridingMethodsDiagramStyle description "show only methods which override another method, hide all other methods" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	displays methods in overridingMethods using blackNormalFieldOrMethodDisplayStyle ;
+	hides methods in allMethods ;
+}
+
+TypeSelector justSerializable description "just Serializable itself" {
+	types named "Serializable" & in package "java.io" ;
+}
+
+TypeSelector serializableTypes description "serializable types" stereotype "serializable" {
+	types subtype of justSerializable ;
+}
+
+TypeDisplayStyle yellowTypeDisplayStyle {
+	border Color ( normal 204 153 0  strong 195 146 0 ) ;
+	members background Color ( normal 255 255 178 strong 255 255 152 ) ;
+}
+
+TypeDisplayStyle blueTypeDisplayStyle {
+	border Color ( normal 54 108 162 strong 51 102 153 ) ; 
+	members background Color ( normal 158 184 184 strong 203 222 230 ) ;
+}
+
+TypeDisplayStyle grayTypeDisplayStyle {
+	border Color ( normal 170 170 170 strong 153 153 153 ) ;
+	members background Color ( normal 190 190 190 strong 210 210 210 ) ;
+}
+
+TypeDisplayStyle greenTypeDisplayStyle {
+	border Color ( normal 102 153 102 strong 96 144 96 ) ;
+	members background Color ( normal 154 222 24 strong  181 248 52) ;
+}
+
+TypeDisplayStyle orangeTypeDisplayStyle {
+	border Color ( normal 209 109 7 strong 200 104 7 ) ;
+	members background Color ( normal 230 190 80 strong 255 204 96 ) ;
+}
+
+TypeDisplayStyle purpleTypeDisplayStyle {
+	border Color ( normal 154 108 154 strong 154 46 154 ) ;
+	members background Color ( normal 242 169 255 strong 246 195 255 ) ;
+}
+
+TypeDisplayStyle pinkTypeDisplayStyle {
+	border Color ( normal 152 35 83 strong 143 33 78 ) ;
+	members background Color ( normal 246 148 197 strong 255 153 204 ) ; 
+}
+
+DiagramStyle highlightSerializableClassesDiagramStyle description "highlight serializable classes in orange" extends allTypesGray {
+	displays types in serializableTypes using orangeTypeDisplayStyle ;
+}
+
+FieldSelector serialUIDFields {
+	fields modified static & named "serialVersionUID" ;
+}
+
+DiagramStyle hideSerialUIDFieldsDiagramStyle description "hides serialUID fields" extends defaultDiagramStyle {
+	canvas Color ( normal 219 218 196 strong 240 239 215 ) ;
+	hides fields in serialUIDFields ;
+}
+
+TypeSelector justException description "just Exception itself" {
+	types named "Exception" & in package "java.lang" ;
+}
+
+TypeSelector exceptionTypes description "class which inherit from Exception" stereotype "exception" {
+	types subtype of justException ;
+}
+
+DiagramStyle highlightExceptionsDiagramStyle description "highlight exception types" extends allTypesGray {
+	displays types in exceptionTypes using purpleTypeDisplayStyle ;
+	displays types in allTypes using grayTypeDisplayStyle ;
+}
+
+TypeSelector interfaceTypes description "all interfaces" stereotype "interface" {
+	interfaces named "*" ;
+}
+
+DiagramStyle highlightInterfacesDiagramStyle description "highlight interfaces (and inheritance lines involving interfaces)" extends allTypesGray {
+	displays types in interfaceTypes using orangeTypeDisplayStyle ;
+}
+
+MethodSelector staticMethods {
+	methods modified static ;
+}
+
+FieldSelector staticFields {
+	fields modified static ;
+}
+
+DiagramStyle showLargeStaticMembersDiagramStyle description "shows static members in large text" extends defaultDiagramStyle {
+	displays methods in staticMethods using largerGreenFieldOrMethodDisplayStyle ;
+	displays fields in staticFields using largerGreenFieldOrMethodDisplayStyle ;
+}
+
+TypeSelector generatedTypes description "selects all @generated classes" stereotype "generated" {
+	types javadoc tag "@generated" ;
+}
+
+TypeSelector handWrittenTypes description "source code types without an @generated tag" stereotype "by hand" {
+	types excluded from generatedTypes &  included in sourceTypes ;
+} 
+
+DiagramStyle highlightGeneratedClassesDiagramStyle description "highlight all @generated classes" extends allTypesGray {
+	displays types in generatedTypes using orangeTypeDisplayStyle ;
+}
+
+FieldSelector referencingOwner {
+	fields matching declarer ;
+}
+
+TypeSelector referenceToSelfTypes description "selects classes with references to self" {
+	types declaring referencingOwner ;
+}
+
+DiagramStyle highlightRefToSelfClassesDiagramStyle description "highlight classes with references to self" extends defaultDiagramStyle {
+	displays types in referenceToSelfTypes using orangeTypeDisplayStyle ;
+}
+
+TypeSelector nameSwitchedTypes description "types with filtered name" {
+	types named namePatternSwitch ;
+}
+
+DiagramStyle highlightMatchingNamePatternDiagramStyle description "highlight in orange types matching name pattern" extends defaultDiagramStyle {
+	displays types in nameSwitchedTypes using orangeTypeDisplayStyle ;
+	displays types in allTypes using grayTypeDisplayStyle ;
+}
+
+TypeSelector typesInMatchingPackage description "select classes in package matching pattern switch" {
+	types in package namePatternSwitch ;
+}
+
+DiagramStyle highlightMatchingPackagePatternDiagramStyle description "highlight types matching package name pattern" extends defaultDiagramStyle {
+	displays types in typesInMatchingPackage using orangeTypeDisplayStyle ;
+}
+
+TypeSelector childOfTypesInMatchingPackage description "select classes derived from a class in package matching pattern switch" {
+	types subtype of typesInMatchingPackage ;
+}
+
+DiagramStyle highlightMatchingPackagePatternOrSubtypesDiagramStyle description "highlight types matching name pattern" extends defaultDiagramStyle {
+	displays types in typesInMatchingPackage using orangeTypeDisplayStyle ;
+	displays types in childOfTypesInMatchingPackage using orangeTypeDisplayStyle ;
+}
+
+TypeSelector dependUponTypesInMatchingPackage description "select classes which depend upon types whose package matches a pattern" {
+	types depending upon typesInMatchingPackage ;
+}
+
+DiagramStyle highlightDependUponMatchingPackagePatternDiagramStyle description "higlight classes which depend upon types whose package matches a pattern" extends defaultDiagramStyle {
+	displays types in dependUponTypesInMatchingPackage using orangeTypeDisplayStyle ;
+}
+
+DiagramStyle highlightMatchPatternMembersDiagramStyle description "highlight fields and methods with name matching a pattern" extends defaultDiagramStyle {
+	displays methods in matchNamePatternMethods using largerGreenFieldOrMethodDisplayStyle ;
+	displays fields in matchNamePatternFields using largerGreenFieldOrMethodDisplayStyle ;
+}
+
+PatternSwitch authorPattern prompt "@author pattern" ;
+
+TypeSelector matchingAuthorPattern description "types matching @author pattern" {
+	types javadoc tag "@author" & javadoc value authorPattern ;
+}
+
+DiagramStyle highlightTypesByAuthor description "highlight types with author matching a pattern" extends allTypesGray {
+	displays types in matchingAuthorPattern using greenTypeDisplayStyle ;
+}
+
+TypeSelector sourceTypes description "types for which the source code is available" {
+	types from sourcecode;
+}
+
+TypeSelector justObject description "just java.lang.Object" {
+	classes in package "java.lang" & named "Object" & from bytecode;
+}
+
+TypeSelector allTopLevelTypesButObject description "all types except Object and inners" {
+	types included in allTopLevelTypes & excluded from justObject; 
+}
+
+DiagramStyle enlargedOverriding description "shows overriding and overridden methods in large text, all fields are hidden" extends allMembersSmallest
+{
+	hides fields in allFields;
+	displays methods in overridingMethods using largerFieldOrMethod;
+	hides field lines from allFields to allTypes;
+	hides dependency lines from allTypes to allTypes;
+}
+
+DiagramStyle dependenciesOnly description "shows types without members and dependency lines only" extends hideAllMembersDiagramStyle {
+	displays dependency lines from allTypes to allTypes using LineStyle ( Color ( normal 40 40 40 strong 0 0 0 ) dotted );
+	hides field lines from allFields to  allTypes;
+	hides inheritance lines from allTypes to allTypes;
+} 
+
+BatchContentDirector standardBatch {
+	seed type selector sourceTypes ( ) ;
+	population type selector allTopLevelTypesButObject ( ) ;
+
+	create by inheritance {
+		use enlargedOverriding ( ) ;
+		use highlightInterfacesDiagramStyle ();
+		use highlightAbstractClassesDiagramStyle ();
+	}
+
+	create by dependency {
+		use dependenciesOnly ( ) ;
+	}
+	
+	create by package {
+		use showOnlyConstructorsDiagramStyle () ;
+		use justFieldsAndFieldLines () ;
+		use highlightJreTypes ();
+	}
+}

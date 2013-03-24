@@ -1,0 +1,891 @@
+package alpha.props.rules
+
+import org.drools.WorkingMemory
+import java.util.logging.Logger
+
+import java.util.LinkedHashSet
+import java.util.HashSet
+import java.util.Set
+
+import alpha.model.adornment.PrototypedAdornment
+import alpha.model.apa.CorpusGenericus
+import alpha.model.apa.AlphaCardType
+import alpha.model.apa.FundamentalSemanticType
+import alpha.model.apa.Priority
+import alpha.model.apa.Visibility
+import alpha.model.apa.Validity
+import alpha.model.apa.VersionControl
+import alpha.model.AlphaCardDescriptor
+import alpha.model.AlphaDoc
+import alpha.model.docconfig.AlphadocConfig
+import alpha.model.identification.AlphaCardID
+import alpha.model.cra.ObjectUnderConsideration
+import alpha.model.psa.AlphaCardRelationship
+import alpha.model.cra.EndpointID
+import alpha.model.cra.Participant
+import alpha.model.cra.ContributorID
+import alpha.model.cra.Token
+
+import alpha.model.Payload
+import alpha.model.identification.CoordCardType
+import alpha.model.apa.APAPayload
+import alpha.model.psa.PSAPayload
+import alpha.model.cra.CRAPayload
+import alpha.model.timestamp.Occurrence;
+
+import alpha.overnet.event.AddAlphaCardEvent
+import alpha.overnet.event.ChangeAlphaCardDescriptorEvent
+import alpha.overnet.event.ChangePayloadEvent
+import alpha.overnet.event.SequentialJoinCallback
+import alpha.overnet.event.SequentialJoinSynchronisation
+import alpha.overnet.event.ParallelJoinCallback
+import alpha.overnet.event.ParallelJoinSynchronisation
+import alpha.overnet.event.TokenPropagation
+import alpha.overnet.event.DeliveryAcknowledgement
+
+import alpha.facades.VerVarStoreFacade
+
+import alpha.facades.AlphaOvernetFacade
+import alpha.util.StringWrapper
+
+import alpha.vvs.HydraWorkspaceImpl
+import alpha.vvs.Workspace
+import org.hydra.core.HydraFacade
+import org.hydra.core.LogicalUnit
+import org.hydra.core.Container
+import org.hydra.core.Artifact
+import alpha.offsync.time.VersionMapHistoryUtility
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import alpha.model.adornment.ConsensusScope
+import alpha.model.versionmap.VersionMap
+import alpha.overnet.event.PayloadContainer
+import alpha.overnet.event.ParticipantJoinEvent
+import alpha.props.JoinUtility
+import alpha.props.TokenUtility
+import alpha.props.AcknowledgementUtility
+
+
+import java.io.File;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import java.util.Enumeration;
+
+
+#queries
+query "alphaDoc"
+	ad : AlphaDoc()
+end
+
+query "alphaCardDescriptors"
+	ac : AlphaCardDescriptor()
+end
+
+query "alphaCardDescriptorByID" (AlphaCardID acid)
+	ac : AlphaCardDescriptor(id == acid)
+end
+
+query "alphaConfig"
+	ac : AlphadocConfig()
+end
+
+query "jarFile"
+	jarFile : File()
+end
+
+#global variables
+global AlphaOvernetFacade ovnFacade
+global Logger LOGGER
+
+#functions
+function String getLocalHardwareAddress(){
+	
+try{	
+		StringBuilder strb = new StringBuilder();
+
+		for (Enumeration<NetworkInterface> enm = NetworkInterface
+				.getNetworkInterfaces(); enm.hasMoreElements();) {
+			NetworkInterface network = (NetworkInterface) enm.nextElement();
+			if (null != network.getHardwareAddress()) {
+				byte[] hwAddress = network.getHardwareAddress();
+				for (int i = 0; i < hwAddress.length; i++) {
+					strb.append(String.format("%02X%s", hwAddress[i],
+							(i < hwAddress.length - 1) ? "-" : ""));
+				}
+				if(hwAddress.length != 0 ) return strb.toString();
+			}
+		}
+
+	} catch (SocketException e) {
+		e.printStackTrace();
+	}
+
+	return new String("");
+	}
+
+function void incrementLocalVersionCount(AlphaCardDescriptor acd, AlphadocConfig adc){
+	acd.getVersionMap().putEntry(adc.getLocalNodeID().getContributor().getActor()+"@"+getLocalHardwareAddress(), 
+		acd.getVersionMap().getNumberOfModifications(adc.getLocalNodeID().getContributor().getActor()+"@"+getLocalHardwareAddress()) + 1L);
+}
+
+function Set getEndpointIDs(CRAPayload craPayload) {
+	Set<EndpointID> EndpointIDs = new HashSet<EndpointID>();
+		for (Participant Participant : craPayload.getListOfParticipants()) {
+			EndpointIDs.add(Participant.getNode());
+		}
+	return EndpointIDs;
+}
+
+function AlphaCardDescriptor insertDescriptorIntoRepository(VersionMapHistoryUtility vvu, AlphaCardDescriptor acd, Payload payload){
+			
+	try{
+		return vvu.insertIntoHistory(acd, payload);
+	}catch(Exception e){
+		e.printStackTrace();	
+	}
+	return null;
+}
+
+function void replaceAlphaCardDescriptor(AlphaCardDescriptor current, AlphaCardDescriptor incoming){
+	
+	
+	ArrayList<String> al = new ArrayList<String>();
+	Iterator<PrototypedAdornment> it = current.readAdornments().iterator();
+	while(it.hasNext()){
+		PrototypedAdornment ad = it.next();
+		if(ad.getConsensusScope() != ConsensusScope.GENERIC_STD){
+		 	al.add(ad.getName());
+		} 			
+	}
+	
+	Iterator<String> ital = al.iterator();
+	while(ital.hasNext()){
+		String name = ital.next();
+		current.deleteAdornment(name);
+	}
+	
+	Iterator<PrototypedAdornment> iter = incoming.readAdornments().iterator();
+	while(iter.hasNext()){
+		PrototypedAdornment ad = iter.next();		
+		# Overwrite all local adornments
+		current.updateOrCreateAdornment(ad);
+	}
+
+	current.setVersionMap(incoming.getVersionMap());
+}
+
+function void propagateObjectUpdate(Object object, CRAPayload craPayload, AlphaOvernetFacade ovnFacade, Logger LOGGER) {
+	LOGGER.finer("Propagating update " + object.getClass().getSimpleName());
+	#ovnFacade.sendUpdate(object, getEndpointIDs(craPayload));
+	
+	List<Object> attachments = new ArrayList<Object>();
+	attachments.add(object);	
+	
+	ovnFacade.sendUpdate(attachments, getEndpointIDs(craPayload), null, null, true, true);
+	
+}
+
+function void sendUpdate(Object object, CRAPayload craPayload, AlphaOvernetFacade ovnFacade, Logger LOGGER, AlphadocConfig config) {
+	LOGGER.finer("Propagating update " + object.getClass().getSimpleName());
+	
+	Set<EndpointID> recipients = new HashSet<EndpointID>();
+		for (Participant participant : craPayload.getListOfParticipants()) {
+			LOGGER.finer(participant.getContributor().getActor() + "------" + config.getLocalNodeID().getContributor().getActor());
+			if(!(participant.getContributor().getActor().equals(config.getLocalNodeID().getContributor().getActor()))){
+				LOGGER.finer("Adding participant");
+				recipients.add(participant.getNode());
+			}	
+		}
+		
+	List<Object> attachments = new ArrayList<Object>();
+	attachments.add(object);	
+	
+	ovnFacade.sendUpdate(attachments, recipients, null, null, true, true);
+	#ovnFacade.sendUpdate(object, recipients);
+}
+
+##############
+#This function increments the version of a token. 
+#Used if participant has changed value or token is propagated (outgoing: PropagateChange == true)
+function void incrementTokenVersionCount(Token token, AlphadocConfig adc){
+	token.getVersionMap().putEntry(adc.getLocalNodeID().getContributor().getActor()+"@"+getLocalHardwareAddress(), 
+		token.getVersionMap().getNumberOfModifications(adc.getLocalNodeID().getContributor().getActor()+"@"+getLocalHardwareAddress()) + 1L);
+}
+
+function void generateDeliveryAcknowledgement(AcknowledgementUtility ackUtil, AlphaCardDescriptor acd, AlphadocConfig adc){
+	if(adc.isAcknowledgeDelivery()){
+		ackUtil.generateDeliveryAcknowledgement(acd.getId(), acd.getVersionMap()); 
+		ackUtil.initializeAcknowledgementStructure(acd);
+	}
+}
+
+###################################
+### Change Adornment Schema Rules #
+###################################
+rule "Update AlphaCardDescriptor"
+	no-loop true
+	when
+		hvs : HydraFacade()
+		vvu: VersionMapHistoryUtility()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		cae : ChangeAlphaCardDescriptorEvent(acid : alphaCardID, acd: alphaCardDescriptor, pc : propagateChange)
+		ac : AlphaCardDescriptor(id == acid)
+		ackUtil : AcknowledgementUtility()
+#		eval( title.equals("Update_AlphaCardDescriptor") )
+	then 
+		LOGGER.finer( "RULE NAME: \"Update AlphaCardDescriptor\" - AlphaCard ID:(" + acid.getCardID() + ")");
+		
+		if(pc == true){
+			#cae.getAlphaCardDescriptor().getVersionMap().putEntry(adc.getMyCurrentUser().getName() , cae.getAlphaCardDescriptor().getVersionMap().getNumberOfModifications(adc.getMyCurrentUser().getName()) + 1L );
+			incrementLocalVersionCount(cae.getAlphaCardDescriptor(), adc);
+		}
+
+		AlphaCardDescriptor currentHead = insertDescriptorIntoRepository(vvu,acd,null);
+		if(currentHead != null){
+			replaceAlphaCardDescriptor(ac, currentHead);
+		}	
+			
+		if(pc == true) {
+			cae.setPropagateChange(false);
+			propagateObjectUpdate(cae, craPayload, ovnFacade, LOGGER);
+		}
+		
+		#if(pc == false){
+			generateDeliveryAcknowledgement(ackUtil, acd, adc);
+		#}
+		retract(cae);
+end
+
+
+###################################
+### Add an AlphaCard Rules ########
+###################################
+rule "Add a content alpha-Card descriptor"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		hwf : Workspace()
+		hvs : HydraFacade()
+		vvu : VersionMapHistoryUtility()
+		adc : AlphadocConfig()
+		aace : AddAlphaCardEvent( ac : alphaCard, pc: propagateChange)
+		psa : AlphaCardDescriptor(psaAcid : id)
+		psaPayload: PSAPayload()
+		ackUtil : AcknowledgementUtility()
+		eval(psaAcid.getCardID().equals(CoordCardType.PSA.id()))
+	then 
+		LOGGER.finer( "RULE NAME: \"Add a content alpha-Card descriptor\" " + ac.getId());
+		
+		if(pc == true){
+			#aace.getAlphaCardDescriptor().getVersionMap().putEntry(adc.getMyCurrentUser().getName() , aace.getAlphaCardDescriptor().getVersionMap().getNumberOfModifications(adc.getMyCurrentUser().getName()) + 1L );
+			incrementLocalVersionCount(aace.getAlphaCardDescriptor(), adc);
+			#incrementLocalVersionCount(psa, adc);			
+		}
+			
+		insertDescriptorIntoRepository(vvu,ac,null);
+		
+		# Insert the extracted AlphaCardDescriptor into the local knowledge base
+		insert(ac);
+					
+		# Prepare addition of the extracted AlphaCardDescriptor to the PSA
+		ChangePayloadEvent cpe = new ChangePayloadEvent(psaAcid, ac.getId());
+		cpe.setPropagateChange(true);
+				
+		# Propagate the update if necessary
+		if(pc == true){
+		
+			# Propagate the addition
+			aace.setPropagateChange(false);
+			propagateObjectUpdate(aace, craPayload, ovnFacade, LOGGER);
+			insert(cpe);	 	
+		}
+		if(pc == false){
+			if(!psaPayload.getListOfTodoItems().contains(ac.getId())){
+			#	psaPayload.getListOfTodoItems().add(ac.getId());
+			#	insertDescriptorIntoRepository(vvu, psa, psaPayload);
+			#	hwf.storePayload(psa, psaPayload);
+			}
+		}
+		generateDeliveryAcknowledgement(ackUtil, psa, adc);
+		generateDeliveryAcknowledgement(ackUtil, aace.getAlphaCardDescriptor(), adc);
+		
+		# Remove AddAlphaCardEvent from the local knowledge base as it is no longer needed
+		retract(aace);
+		# Insert the ChangePayloadEvent into the local knowledge base to update the local PSA
+		
+
+end
+
+rule "Add a content alpha-Card descriptor (PUBLIC)"
+	no-loop true
+	when
+		ac : AlphaCardDescriptor(acid : id)
+		eval( ac.readAdornment(CorpusGenericus.VISIBILITY.value()).getValue().equalsIgnoreCase(Visibility.PUBLIC.value()) )
+		$ac : AlphaCardDescriptor( id == acid )
+	then
+		LOGGER.finer( "RULE NAME: \"Add a content alpha-Card descriptor (PUBLIC)\" - AlphaCard ID:(" + ac.getId() + ")");
+		if( $ac.readAdornment(CorpusGenericus.VISIBILITY.value()).getValue().equalsIgnoreCase(Visibility.PRIVATE.value()) ) {
+			LOGGER.finer("Retracted AlphaCard with visibility private.");
+			retract($ac);
+		}
+end
+
+###################################
+### Change Payload Rules ##########
+###################################
+rule "PSAPayload: Add a new content alpha-Card descriptor to the ToDoItems"
+	when
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		adc : AlphadocConfig()
+		psaPayload : PSAPayload()
+		craPayload : CRAPayload()
+		cpe : ChangePayloadEvent( acid : alphaCardID, pc : propagateChange )
+		ac : AlphaCardDescriptor( id == acid )
+		ackUtil : AcknowledgementUtility()
+		eval(acid.getCardID().equals(CoordCardType.PSA.id()))# && cpe.getPayloadContainer().getObj() instanceof AlphaCardID)
+	then
+		psaPayload = (PSAPayload) hwf.loadPayload(ac, new Payload());
+		AlphaCardDescriptor currentHead;
+		
+		if(!(cpe.getPayloadContainer().getObj() instanceof AlphaCardID)){
+			LOGGER.finer("Received PSA update via join message");
+			if(cpe.getPayloadContainer().getObj() instanceof PSAPayload){
+				LOGGER.finer("Payload type is PSAPayload");
+				PSAPayload incoming = (PSAPayload) cpe.getPayloadContainer().getObj();
+				psaPayload.getListOfTodoItems().addAll(incoming.getListOfTodoItems());
+				currentHead = insertDescriptorIntoRepository(vvu, cpe.getAlphaCardDescriptor(), psaPayload);
+			}
+			else{
+				currentHead = insertDescriptorIntoRepository(vvu, cpe.getAlphaCardDescriptor(), hwf.loadPayload(cpe.getAlphaCardDescriptor(), new Payload()));
+			}
+			if(currentHead != null){
+				replaceAlphaCardDescriptor(ac, currentHead);
+			}
+		}
+		else{
+		LOGGER.finer( "RULE NAME: \"PSAPayload: Add a new content alpha-Card descriptor to the ToDoItems\" ");
+		psaPayload.getListOfTodoItems().add((AlphaCardID)cpe.getPayloadContainer().getObj());
+					
+		# Persist the local payload
+		#hwf.storePayload(ac,psaPayload);
+		#Create Logical Unit, Add Descriptor and Commit
+		if(pc == true){
+			incrementLocalVersionCount(ac, adc);
+		}
+		
+		
+		
+		if(pc == false){
+			currentHead= insertDescriptorIntoRepository(vvu, cpe.getAlphaCardDescriptor(), psaPayload);
+		}	
+		else{
+			currentHead= insertDescriptorIntoRepository(vvu, ac, psaPayload);
+		}
+		if(currentHead != null){
+			replaceAlphaCardDescriptor(ac, currentHead);
+		}
+				
+		if(pc == true) {
+			cpe.setPropagateChange(false);
+			cpe.setAlphaCardDescriptor(ac);
+			propagateObjectUpdate(cpe, craPayload, ovnFacade, LOGGER);
+		}
+		}
+		generateDeliveryAcknowledgement(ackUtil, ac, adc);
+		retract(cpe);
+end
+
+rule "PSAPayload: Add a relationship"
+	when
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		psaPayload : PSAPayload()
+		craPayload : CRAPayload()
+		adc : AlphadocConfig()
+		cpe : ChangePayloadEvent( acid : alphaCardID, pc : propagateChange )
+		ac : AlphaCardDescriptor( id == acid )
+		ackUtil : AcknowledgementUtility()
+		eval(acid.getCardID().equals(CoordCardType.PSA.id()) && cpe.getPayloadContainer().getObj() instanceof AlphaCardRelationship)
+	then
+		psaPayload = (PSAPayload) hwf.loadPayload(ac, new Payload()); 
+		LOGGER.finer( "RULE NAME: \"PSAPayload: Add a relationship\" ");
+		psaPayload.getListOfTodoRelationships().add((AlphaCardRelationship)cpe.getPayloadContainer().getObj());
+		
+		if(pc == true){
+			incrementLocalVersionCount(ac, adc);
+		}
+			
+		AlphaCardDescriptor currentHead;
+		if(pc == false){
+			currentHead= insertDescriptorIntoRepository(vvu, cpe.getAlphaCardDescriptor(), psaPayload);
+		}	
+		else{
+			currentHead= insertDescriptorIntoRepository(vvu, ac, psaPayload);
+		}
+		if(currentHead != null){
+			replaceAlphaCardDescriptor(ac, currentHead);
+		}
+			
+		# Persist the local payload
+		#String fileExtension = "xml";
+		#hwf.storePayload(ac,psaPayload);
+		#Create Logical Unit, Add Payload and Commit
+		#try{
+		#	LogicalUnit lu = hvs.getStage().getLogicalUnit(ac.getId().getCardID());
+		#	if(lu == null){	
+		#		lu = hvs.createLogicalUnit(ac.getId().getCardID());
+		#	}
+		#	lu.getContents().addElement(new Artifact(hwf.getPayloadFile(ac)));
+		#	lu.commit("user", "Add relationship");
+		#}catch(Exception e){
+		#	e.printStackTrace();
+		#}
+		
+		if(pc == true) {
+			cpe.setPropagateChange(false);
+			cpe.setAlphaCardDescriptor(ac);
+			propagateObjectUpdate(cpe, craPayload, ovnFacade, LOGGER);
+		}
+		
+		generateDeliveryAcknowledgement(ackUtil, ac, adc);
+		
+		retract(cpe);
+end
+
+rule "Update the APAPayload"
+	when
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		apaPayload : APAPayload()
+		craPayload : CRAPayload()
+		adc : AlphadocConfig()
+		cpe : ChangePayloadEvent( acid : alphaCardID, pc : propagateChange )
+		ac : AlphaCardDescriptor( id == acid )
+		ackUtil : AcknowledgementUtility()
+		eval(acid.getCardID().equals(CoordCardType.APA.id()) && cpe.getPayloadContainer().getObj() instanceof AlphaCardDescriptor)
+	then 
+		LOGGER.finer( "RULE NAME: \"Update the APAPayload\" ");
+		apaPayload = (APAPayload) hwf.loadPayload(ac, new Payload());
+		apaPayload.setContentCardAdornmentPrototype( (AlphaCardDescriptor)cpe.getPayloadContainer().getObj() );
+	
+		# Persist the local payload
+		String fileExtension = "xml";
+		hwf.storePayload(ac,apaPayload);
+		#Create Logical Unit, Add Descriptor and Commit
+		
+		if(pc == true){
+			incrementLocalVersionCount(ac, adc);
+		}
+			
+		AlphaCardDescriptor currentHead = insertDescriptorIntoRepository(vvu, ac, apaPayload);
+		if(currentHead != null){
+			replaceAlphaCardDescriptor(ac, currentHead);
+		}
+
+		if(pc == true) {
+			cpe.setPropagateChange(false);
+			propagateObjectUpdate(cpe, craPayload, ovnFacade, LOGGER);
+		}
+		
+		generateDeliveryAcknowledgement(ackUtil, ac, adc);
+		
+		retract(cpe);
+end
+
+rule "CRAPayload: Add or update a Participant"
+	when
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu: VersionMapHistoryUtility()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		cpe : ChangePayloadEvent( acid : alphaCardID, pc : propagateChange )
+		ac : AlphaCardDescriptor( id == acid )
+		acs : ArrayList() from collect (AlphaCardDescriptor())
+		eval(cpe.getPayloadContainer().getObj() instanceof Participant)
+		eval(acid.getCardID().equals(CoordCardType.CRA.id()) &&  cpe.getPayloadContainer().getObj() instanceof Participant)
+	then
+	LOGGER.finer( "RULE NAME: CRAPayload");
+		boolean add = true;
+		
+		#craPayload = (CRAPayload) hwf.loadPayload(ac, new Payload());
+		Participant incoming = (Participant) cpe.getPayloadContainer().getObj();
+		
+		# update Participant
+		for (Participant Participant : craPayload.getListOfParticipants()) {
+			if(Participant.getContributor().equals(incoming.getContributor())) {
+				LOGGER.finer( "RULE NAME: \"CRAPayload: Add or update a Participant - UPDATE\" ");
+				Participant.setNode(((Participant)cpe.getPayloadContainer().getObj()).getNode());
+		
+				LOGGER.finer("DROOLS: REPLACING PARTICIPANT");
+				for( Token t : incoming.readTokens()){
+					if(!Participant.readToken(t.getName()).getValue().equals(t.getValue())){
+						if(pc == true){
+							incrementTokenVersionCount(t, adc);
+						}
+						Occurrence occ = t.getVersionMap().compare(Participant.readToken(t.getName()).getVersionMap());
+						if(occ == Occurrence.FOLLOWING){
+							Participant.updateOrCreateToken(t);
+							LOGGER.finer("DROOLS: REPLACING TOKEN _"+ t);
+						}
+					}
+				}
+				# Persist the local payload
+				hwf.storePayload(ac,craPayload);
+				
+				if(pc == true) {
+					cpe.setPropagateChange(false);
+					propagateObjectUpdate(cpe, craPayload, ovnFacade, LOGGER);
+				}
+				add = false;
+			}
+		}
+
+		# add a new one
+		if(add) {
+			LOGGER.finer( "RULE NAME: \"CRAPayload: Add or update a Participant - ADD\" ");
+			craPayload.getListOfParticipants().add((Participant)cpe.getPayloadContainer().getObj());
+			hwf.storePayload(ac,craPayload);
+		}
+		
+		retract(cpe);
+end
+
+rule "Add payload to a content alpha-Card descriptor"
+	when
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu: VersionMapHistoryUtility()
+		craPayload : CRAPayload()
+		psaPayload : PSAPayload()
+		cpe : ChangePayloadEvent( acid : alphaCardID, pc : propagateChange)
+		acs : ArrayList() from collect (AlphaCardDescriptor())
+		psa : AlphaCardDescriptor(psaAcid : id)
+		adc : AlphadocConfig()
+		ackUtil : AcknowledgementUtility()
+		eval(psaAcid.getCardID().equals(CoordCardType.PSA.id()))
+		eval(cpe.getPayloadContainer().getObj() instanceof Payload)
+	then 
+		LOGGER.finer( "RULE NAME: \"Add payload to a content alpha-Card descriptor\" -  "); # + ac.getId().getCardID())));
+		AlphaCardDescriptor acd = cpe.getAlphaCardDescriptor();
+		LOGGER.finer("1 ---------:" + cpe.isPropagateChange() + "---:" + pc);
+		boolean propagate = false;
+		if(pc) propagate = true;
+		
+		if(pc == true){
+			#acd.getVersionMap().putEntry(adc.getMyCurrentUser().getName(), acd.getVersionMap().getNumberOfModifications(adc.getMyCurrentUser().getName()) + 1L);
+			incrementLocalVersionCount(acd, adc);
+		}
+		
+		boolean retracted = false;
+		if(!psaPayload.getListOfTodoItems().contains(acd.getId())){
+			LOGGER.finer("INSERTING ACD");
+			
+			#psaPayload.getListOfTodoItems().add(acd.getId());
+			#insertDescriptorIntoRepository(vvu, psa, psaPayload);
+			#hwf.storePayload(psa, psaPayload);
+						
+			insertDescriptorIntoRepository(vvu,acd,(Payload) cpe.getPayloadContainer().getObj());
+			insert(acd);
+			#ChangePayloadEvent cp = new ChangePayloadEvent(psaAcid, acd.getId());
+			#cp.setPropagateChange(false);
+			retracted = true;
+			retract(cpe);
+			#insert(cp);
+			if(pc == false){
+
+
+		}
+			
+		}
+		else{
+			Iterator<AlphaCardDescriptor> it = acs.iterator();
+			while(it.hasNext()){	
+				AlphaCardDescriptor acit = it.next();
+				if(acit.getId().equals(acd.getId())){
+					LOGGER.finer("REPLACING ACD");
+					AlphaCardDescriptor currentHead = insertDescriptorIntoRepository(vvu,acd, (Payload)cpe.getPayloadContainer().getObj());
+					if(currentHead != null){
+						replaceAlphaCardDescriptor(acit, currentHead);
+					}	
+				}
+			}			
+		}
+				
+		# Persist the local payload
+		#String fileExtension = acd.readAdornment(CorpusGenericus.SYNTACTICPAYLOADTYPE.value()).getValue();
+		#hwf.storePayload(acd,(Payload)cpe.getPayloadContainer().getObj());
+		#Create Logical Unit, Add Descriptor and Commit
+		#try{
+		#	LogicalUnit lu = hvs.getStage().getLogicalUnit(acd.getId().getCardID());
+		#	if(lu == null){	
+		#		lu = hvs.createLogicalUnit(acd.getId().getCardID());
+		#	}
+		#	lu.getContents().addElement(new Item(hwf.getPayloadFile(acd)));
+		#	lu.commit("user", "Set content payload");
+		#}catch(Exception e){
+		#	e.printStackTrace();
+		#}		
+		
+		LOGGER.finer("2 ---------:" + cpe.isPropagateChange() + "---:" + pc+ " progate:" + propagate);		
+		if(propagate == true) {
+			cpe.setPropagateChange(false);
+			#cpe.getAlphaCardDescriptor().getVersionMap().addParticipant(adc.getMyCurrentUser().getName() , cpe.getAlphaCardDescriptor().getVersionMap().getCount(adc.getMyCurrentUser().getName()) + 1L );
+			propagateObjectUpdate(cpe, craPayload, ovnFacade, LOGGER);
+		}
+		
+		generateDeliveryAcknowledgement(ackUtil, acd, adc);
+		
+		if(!retracted) retract(cpe);
+end
+
+
+rule "Join initiation"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		adc: AlphadocConfig()
+		joinUtil: JoinUtility()
+		acs: ArrayList() from collect (AlphaCardDescriptor())
+		sjc : SequentialJoinCallback(pc: propagateChange)
+	then 
+		LOGGER.finer( "RULE NAME: \"Join initiation");
+		
+		if(pc == true){
+			sjc.setPropagateChange(false);
+			
+			List<Object> attachments = new ArrayList<Object>();
+			if(adc.isSecureCommunication()){
+				File pgpPubKeys = new File(adc.getHomePath() + "/publicKeyRing.asc");			
+				attachments.add(pgpPubKeys);
+			}
+			attachments.add(sjc);
+			
+			Set<EndpointID> recipients = getEndpointIDs(craPayload);
+			for(EndpointID recipient : recipients){
+				if(recipient.equals(adc.getLocalNodeID().getNode())){
+					recipients.remove(recipient);
+					break;
+				}
+				
+			}
+			if(recipients.size() != 0) ovnFacade.sendUpdate(attachments, recipients, null , null, true, true);
+			//propagateObjectUpdate(sjc, craPayload, ovnFacade, LOGGER);			
+		}
+		else{
+			LOGGER.finer( "RULE NAME: \"Join initiation received");
+			SequentialJoinSynchronisation sjs = joinUtil.handleSequentialJoinCallback(sjc);
+			sjs.setPropagateChange(true);
+			#propagateObjectUpdate(sjs, craPayload, ovnFacade, LOGGER);
+			#insert(sjs);
+			
+			Set<EndpointID> recipients = new HashSet();
+			recipients.add(sjc.getInquirer().getNode());
+			
+			List<Object> attachments = new ArrayList<Object>();
+			if(adc.isSecureCommunication()){
+				File pgpPubKeys = new File(adc.getHomePath() + "/publicKeyRing.asc");			
+				attachments.add(pgpPubKeys);
+			}
+			attachments.add(sjs);
+			sjs.setPropagateChange(false);
+			ovnFacade.sendUpdate(attachments, recipients, null, null, true, true);
+					
+			#ovnFacade.sendUpdate(sjs, recipients);
+		}		
+		
+		retract(sjc);		
+end
+
+rule "Handle SequentialJoinSynchronisation"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		adc: AlphadocConfig()
+		joinUtil: JoinUtility()
+		acs: ArrayList() from collect (AlphaCardDescriptor())
+		sjs : SequentialJoinSynchronisation(pc: propagateChange)
+	then 
+		LOGGER.finer( "RULE NAME: \"Handle SequentialJoinSynchronisation");
+		
+		if(pc == true){
+			sjs.setPropagateChange(false);
+			#propagateObjectUpdate(sjs, craPayload, ovnFacade, LOGGER);			
+		}
+		else{
+			LOGGER.finer( "RULE NAME: \"SequentialJoinSynchronisation received");
+			List<Participant> joinedParallel  = joinUtil.getMissingParticipants(sjs.getKnownActors(), craPayload.getActorNames());
+			ParallelJoinCallback pjc = joinUtil.handleSequentialJoinSynchronisation(sjs);
+			pjc.setPropagateChange(false);
+			#propagateObjectUpdate(pjc, craPayload, ovnFacade, LOGGER);
+			Set<EndpointID> recipients = new HashSet();
+			
+			for(Participant participant : joinedParallel){
+				recipients.add(participant.getNode());
+			}
+			#ovnFacade.sendUpdate(pjc, recipients);
+			LOGGER.finer("JOINED PARALLEL:" + joinedParallel);
+			
+			List<Object> attachments = new ArrayList<Object>();
+			if(adc.isSecureCommunication()){
+				File pgpPubKeys = new File(adc.getHomePath() + "/publicKeyRing.asc");			
+				attachments.add(pgpPubKeys);
+			}	
+			attachments.add(pjc);
+			ovnFacade.sendUpdate(attachments, recipients, null, null, true, true);
+		}		
+		
+		retract(sjs);		
+end
+
+rule "Handle ParallelJoinCallback"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		joinUtil: JoinUtility()
+		acs: ArrayList() from collect (AlphaCardDescriptor())
+		pjc : ParallelJoinCallback(pc: propagateChange)
+	then 
+		LOGGER.finer( "RULE NAME: \"Handle ParallelJoinCallback");
+		
+		if(pc == true){
+			pjc.setPropagateChange(false);
+			#propagateObjectUpdate(sjs, craPayload, ovnFacade, LOGGER);			
+		}
+		else{
+			
+			LOGGER.finer( "RULE NAME: \"ParallelJoinCallback received");
+			
+			ParallelJoinSynchronisation pjs = joinUtil.handleParallelJoinCallback(pjc);
+			pjs.setPropagateChange(false);
+			
+			Set<EndpointID> recipients = new HashSet();
+			recipients.add(pjc.getInquirer().getNode());
+			
+			ovnFacade.sendUpdate(pjs, recipients);
+		}		
+		
+		retract(pjc);		
+end
+
+rule "Handle ParallelJoinSynchronisation"
+	no-loop true
+	when
+		craPayload : CRAPayload()
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu : VersionMapHistoryUtility()
+		joinUtil: JoinUtility()
+		acs: ArrayList() from collect (AlphaCardDescriptor())
+		pjs : ParallelJoinSynchronisation(pc: propagateChange)
+	then 
+		LOGGER.finer( "RULE NAME: \"Handle ParallelJoinSynchronisation");
+		
+		if(pc == true){
+			pjs.setPropagateChange(false);
+			#propagateObjectUpdate(sjs, craPayload, ovnFacade, LOGGER);			
+		}
+		else{
+			
+			LOGGER.finer( "RULE NAME: \"ParallelJoinSynchronisation received");
+			
+			SequentialJoinSynchronisation sjs = joinUtil.handleParallelJoinSynchronisation(pjs);
+			sjs.setPropagateChange(false);
+			
+			Set<EndpointID> recipients = new HashSet();
+			recipients.add(pjs.getInquirer().getNode());
+			
+			ovnFacade.sendUpdate(sjs, recipients);
+			
+		}		
+		
+		retract(pjs);		
+end
+
+rule "Handle TokenPropagation"
+	when
+		hvs : HydraFacade()
+		hwf : Workspace()
+		vvu: VersionMapHistoryUtility()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		tp : TokenPropagation(pc: propagateChange)
+		tokenUtil: TokenUtility()
+	then
+		LOGGER.info( "RULE NAME: \"Handle TokenPropagation "  + tp);
+		
+		if(pc == true){
+			tp.setPropagateChange(false);
+			
+			#version map increment of token
+			incrementTokenVersionCount(tp.getReceiverToken(), adc);
+
+			#broadcast TokenPropagation to all known actors	
+			Set<EndpointID> recipients = getEndpointIDs(craPayload);
+			for(EndpointID recipient : recipients){
+				if(recipient.equals(adc.getLocalNodeID().getNode())){
+					recipients.remove(recipient);
+					break;
+				}				
+			}
+			if(recipients.size() != 0) ovnFacade.sendUpdate(tp, recipients);
+			
+			tokenUtil.handleTokenPropagation(tp);
+		}
+		else{
+			LOGGER.finer( "TokenPropagation received " +tp);
+			
+			tokenUtil.handleTokenPropagation(tp);
+		}		
+		
+		retract(tp);		
+end
+
+rule "Handle DeliveryAcknowledgement"
+	when
+		hwf : Workspace()
+		adc: AlphadocConfig()
+		craPayload : CRAPayload()
+		da : DeliveryAcknowledgement(pc: propagateChange)
+		ackUtil: AcknowledgementUtility()
+	then
+		LOGGER.finer( "RULE NAME: \"Handle DeliveryAcknowledgement "  + da);
+		
+		if(pc == true){
+			da.setPropagateChange(false);
+
+			#broadcast DeliveryAcknowledgement to all known actors	
+			Set<EndpointID> recipients = getEndpointIDs(craPayload);
+			for(EndpointID recipient : recipients){
+				if(recipient.equals(adc.getLocalNodeID().getNode())){
+					recipients.remove(recipient);
+					break;
+				}				
+			}
+			if(recipients.size() != 0) ovnFacade.sendUpdate(da, recipients);
+		}	
+		
+		ackUtil.handleDeliveryAcknowledgement(da);	
+		
+		retract(da);		
+end

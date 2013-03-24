@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{28D8E6C5-5289-484B-BEFE-E012876BDC37}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PrintPut</RootNamespace>
+    <AssemblyName>PrintPut</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationLoader.cs" />
+    <Compile Include="ApplicationLoaderPInvoke.cs" />
+    <Compile Include="EnvironmentCheck.cs" />
+    <Compile Include="EnvironmentCheckPInvoke.cs" />
+    <Compile Include="gs9.02\lib\Fontmap.URW-136.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Fontmap.URW-136.TT</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <Content Include="gs9.02\bin\gsdll32.lib" />
+    <Content Include="gs9.02\lib\acctest.ps" />
+    <Content Include="gs9.02\lib\addxchar.ps" />
+    <Content Include="gs9.02\lib\afmdiff.awk" />
+    <Content Include="gs9.02\lib\align.ps" />
+    <Content Include="gs9.02\lib\bdftops" />
+    <Content Include="gs9.02\lib\bdftops.bat" />
+    <Content Include="gs9.02\lib\bdftops.cmd" />
+    <Content Include="gs9.02\lib\bdftops.ps" />
+    <Content Include="gs9.02\lib\bj8.rpd" />
+    <Content Include="gs9.02\lib\bj8gc12f.upp" />
+    <Content Include="gs9.02\lib\bj8hg12f.upp" />
+    <Content Include="gs9.02\lib\bj8oh06n.upp" />
+    <Content Include="gs9.02\lib\bj8pa06n.upp" />
+    <Content Include="gs9.02\lib\bj8pp12f.upp" />
+    <Content Include="gs9.02\lib\bj8ts06n.upp" />
+    <Content Include="gs9.02\lib\bjc610a0.upp" />
+    <Content Include="gs9.02\lib\bjc610a1.upp" />
+    <Content Include="gs9.02\lib\bjc610a2.upp" />
+    <Content Include="gs9.02\lib\bjc610a3.upp" />
+    <Content Include="gs9.02\lib\bjc610a4.upp" />
+    <Content Include="gs9.02\lib\bjc610a5.upp" />
+    <Content Include="gs9.02\lib\bjc610a6.upp" />
+    <Content Include="gs9.02\lib\bjc610a7.upp" />
+    <Content Include="gs9.02\lib\bjc610a8.upp" />
+    <Content Include="gs9.02\lib\bjc610b1.upp" />
+    <Content Include="gs9.02\lib\bjc610b2.upp" />
+    <Content Include="gs9.02\lib\bjc610b3.upp" />
+    <Content Include="gs9.02\lib\bjc610b4.upp" />
+    <Content Include="gs9.02\lib\bjc610b6.upp" />
+    <Content Include="gs9.02\lib\bjc610b7.upp" />
+    <Content Include="gs9.02\lib\bjc610b8.upp" />
+    <Content Include="gs9.02\lib\caption.ps" />
+    <Content Include="gs9.02\lib\cat.ps" />
+    <Content Include="gs9.02\lib\cbjc600.ppd" />
+    <Content Include="gs9.02\lib\cbjc800.ppd" />
+    <Content Include="gs9.02\lib\cdj550.upp" />
+    <Content Include="gs9.02\lib\cdj690.upp" />
+    <Content Include="gs9.02\lib\cdj690ec.upp" />
+    <Content Include="gs9.02\lib\cid2code.ps" />
+    <Content Include="gs9.02\lib\decrypt.ps" />
+    <Content Include="gs9.02\lib\dnj750c.upp" />
+    <Content Include="gs9.02\lib\dnj750m.upp" />
+    <Content Include="gs9.02\lib\docie.ps" />
+    <Content Include="gs9.02\lib\dumphint" />
+    <Content Include="gs9.02\lib\dumphint.bat" />
+    <Content Include="gs9.02\lib\dumphint.ps" />
+    <Content Include="gs9.02\lib\dvipdf" />
+    <Content Include="gs9.02\lib\EndOfTask.ps" />
+    <Content Include="gs9.02\lib\eps2eps" />
+    <Content Include="gs9.02\lib\eps2eps.bat" />
+    <Content Include="gs9.02\lib\eps2eps.cmd" />
+    <Content Include="gs9.02\lib\FAPIconfig-FCO" />
+    <Content Include="gs9.02\lib\FCOfontmap-PCLPS3" />
+    <Content Include="gs9.02\lib\FCOfontmap-PS3" />
+    <Content Include="gs9.02\lib\fixmswrd.pl" />
+    <Content Include="gs9.02\lib\font2c" />
+    <Content Include="gs9.02\lib\font2c.bat" />
+    <Content Include="gs9.02\lib\font2c.cmd" />
+    <Content Include="gs9.02\lib\font2c.ps" />
+    <Content Include="gs9.02\lib\font2pcl.ps" />
+    <Content Include="gs9.02\lib\Fontmap.ATB" />
+    <Content Include="gs9.02\lib\Fontmap.ATM" />
+    <Content Include="gs9.02\lib\Fontmap.OS2" />
+    <Content Include="gs9.02\lib\Fontmap.OSF" />
+    <Content Include="gs9.02\lib\Fontmap.SGI" />
+    <Content Include="gs9.02\lib\Fontmap.Ult" />
+    <Content Include="gs9.02\lib\Fontmap.URW-136.T1" />
+    <Content Include="gs9.02\lib\Fontmap.URW-136.TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Fontmap.URW-136.cs</LastGenOutput>
+    </Content>
+    <Content Include="gs9.02\lib\Fontmap.VMS" />
+    <Content Include="gs9.02\lib\ghostpdf.ppd" />
+    <Content Include="gs9.02\lib\gsbj" />
+    <Content Include="gs9.02\lib\gsbj.bat" />
+    <Content Include="gs9.02\lib\gsdj" />
+    <Content Include="gs9.02\lib\gsdj.bat" />
+    <Content Include="gs9.02\lib\gsdj500" />
+    <Content Include="gs9.02\lib\gsdj500.bat" />
+    <Content Include="gs9.02\lib\gslj" />
+    <Content Include="gs9.02\lib\gslj.bat" />
+    <Content Include="gs9.02\lib\gslp" />
+    <Content Include="gs9.02\lib\gslp.bat" />
+    <Content Include="gs9.02\lib\gslp.ps" />
+    <Content Include="gs9.02\lib\gsnd" />
+    <Content Include="gs9.02\lib\gsnd.bat" />
+    <Content Include="gs9.02\lib\gsndt.bat" />
+    <Content Include="gs9.02\lib\gsnup.ps" />
+    <Content Include="gs9.02\lib\gssetgs.bat" />
+    <Content Include="gs9.02\lib\gst.bat" />
+    <Content Include="gs9.02\lib\gstt.bat" />
+    <Content Include="gs9.02\lib\gs_ce_e.ps" />
+    <Content Include="gs9.02\lib\gs_cmdl.ps" />
+    <Content Include="gs9.02\lib\gs_fform.ps" />
+    <Content Include="gs9.02\lib\gs_il2_e.ps" />
+    <Content Include="gs9.02\lib\gs_kanji.ps" />
+    <Content Include="gs9.02\lib\gs_ksb_e.ps" />
+    <Content Include="gs9.02\lib\gs_l.xbm" />
+    <Content Include="gs9.02\lib\gs_l.xpm" />
+    <Content Include="gs9.02\lib\gs_lgo_e.ps" />
+    <Content Include="gs9.02\lib\gs_lgx_e.ps" />
+    <Content Include="gs9.02\lib\gs_l_m.xbm" />
+    <Content Include="gs9.02\lib\gs_m.xbm" />
+    <Content Include="gs9.02\lib\gs_m.xpm" />
+    <Content Include="gs9.02\lib\gs_m_m.xbm" />
+    <Content Include="gs9.02\lib\gs_pfile.ps" />
+    <Content Include="gs9.02\lib\gs_rdlin.ps" />
+    <Content Include="gs9.02\lib\gs_s.xbm" />
+    <Content Include="gs9.02\lib\gs_s.xpm" />
+    <Content Include="gs9.02\lib\gs_s_m.xbm" />
+    <Content Include="gs9.02\lib\gs_t.xbm" />
+    <Content Include="gs9.02\lib\gs_t.xpm" />
+    <Content Include="gs9.02\lib\gs_t_m.xbm" />
+    <Content Include="gs9.02\lib\gs_wl1_e.ps" />
+    <Content Include="gs9.02\lib\gs_wl2_e.ps" />
+    <Content Include="gs9.02\lib\gs_wl5_e.ps" />
+    <Content Include="gs9.02\lib\ht_ccsto.ps" />
+    <Content Include="gs9.02\lib\image-qa.ps" />
+    <Content Include="gs9.02\lib\impath.ps" />
+    <Content Include="gs9.02\lib\Info-macos.plist" />
+    <Content Include="gs9.02\lib\jispaper.ps" />
+    <Content Include="gs9.02\lib\jobseparator.ps" />
+    <Content Include="gs9.02\lib\landscap.ps" />
+    <Content Include="gs9.02\lib\level1.ps" />
+    <Content Include="gs9.02\lib\lines.ps" />
+    <Content Include="gs9.02\lib\lp386.bat" />
+    <Content Include="gs9.02\lib\lp386r2.bat" />
+    <Content Include="gs9.02\lib\lpgs.bat" />
+    <Content Include="gs9.02\lib\lpr2.bat" />
+    <Content Include="gs9.02\lib\lprsetup.sh" />
+    <Content Include="gs9.02\lib\markhint.ps" />
+    <Content Include="gs9.02\lib\markpath.ps" />
+    <Content Include="gs9.02\lib\mkcidfm.ps" />
+    <Content Include="gs9.02\lib\necp2x.upp" />
+    <Content Include="gs9.02\lib\necp2x6.upp" />
+    <Content Include="gs9.02\lib\opdfread.ps" />
+    <Content Include="gs9.02\lib\packfile.ps" />
+    <Content Include="gs9.02\lib\pcharstr.ps" />
+    <Content Include="gs9.02\lib\pdf2dsc" />
+    <Content Include="gs9.02\lib\pdf2dsc.bat" />
+    <Content Include="gs9.02\lib\pdf2dsc.ps" />
+    <Content Include="gs9.02\lib\pdf2ps" />
+    <Content Include="gs9.02\lib\pdf2ps.bat" />
+    <Content Include="gs9.02\lib\pdf2ps.cmd" />
+    <Content Include="gs9.02\lib\PDFA_def.ps" />
+    <Content Include="gs9.02\lib\pdfopt" />
+    <Content Include="gs9.02\lib\pdfopt.bat" />
+    <Content Include="gs9.02\lib\pdfopt.ps" />
+    <Content Include="gs9.02\lib\pdfwrite.ps" />
+    <Content Include="gs9.02\lib\PDFX_def.ps" />
+    <Content Include="gs9.02\lib\pf2afm" />
+    <Content Include="gs9.02\lib\pf2afm.bat" />
+    <Content Include="gs9.02\lib\pf2afm.cmd" />
+    <Content Include="gs9.02\lib\pf2afm.ps" />
+    <Content Include="gs9.02\lib\pfbtopfa" />
+    <Content Include="gs9.02\lib\pfbtopfa.bat" />
+    <Content Include="gs9.02\lib\pfbtopfa.ps" />
+    <Content Include="gs9.02\lib\pftogsf.bat" />
+    <Content Include="gs9.02\lib\ppath.ps" />
+    <Content Include="gs9.02\lib\pphs" />
+    <Content Include="gs9.02\lib\pphs.ps" />
+    <Content Include="gs9.02\lib\prfont.ps" />
+    <Content Include="gs9.02\lib\printafm" />
+    <Content Include="gs9.02\lib\printafm.ps" />
+    <Content Include="gs9.02\lib\printputpdf.inf" />
+    <Content Include="gs9.02\lib\ps2ai.ps" />
+    <Content Include="gs9.02\lib\ps2ascii" />
+    <Content Include="gs9.02\lib\ps2ascii.bat" />
+    <Content Include="gs9.02\lib\ps2ascii.cmd" />
+    <Content Include="gs9.02\lib\ps2ascii.ps" />
+    <Content Include="gs9.02\lib\ps2epsi" />
+    <Content Include="gs9.02\lib\ps2epsi.bat" />
+    <Content Include="gs9.02\lib\ps2epsi.cmd" />
+    <Content Include="gs9.02\lib\ps2epsi.ps" />
+    <Content Include="gs9.02\lib\ps2pdf" />
+    <Content Include="gs9.02\lib\ps2pdf.bat" />
+    <Content Include="gs9.02\lib\ps2pdf.cmd" />
+    <Content Include="gs9.02\lib\ps2pdf12" />
+    <Content Include="gs9.02\lib\ps2pdf12.bat" />
+    <Content Include="gs9.02\lib\ps2pdf12.cmd" />
+    <Content Include="gs9.02\lib\ps2pdf13" />
+    <Content Include="gs9.02\lib\ps2pdf13.bat" />
+    <Content Include="gs9.02\lib\ps2pdf13.cmd" />
+    <Content Include="gs9.02\lib\ps2pdf14" />
+    <Content Include="gs9.02\lib\ps2pdf14.bat" />
+    <Content Include="gs9.02\lib\ps2pdf14.cmd" />
+    <Content Include="gs9.02\lib\ps2pdfwr" />
+    <Content Include="gs9.02\lib\ps2pdfxx.bat" />
+    <Content Include="gs9.02\lib\ps2ps" />
+    <Content Include="gs9.02\lib\ps2ps.bat" />
+    <Content Include="gs9.02\lib\ps2ps.cmd" />
+    <Content Include="gs9.02\lib\ps2ps2" />
+    <Content Include="gs9.02\lib\ps2ps2.bat" />
+    <Content Include="gs9.02\lib\ps2ps2.cmd" />
+    <Content Include="gs9.02\lib\pv.sh" />
+    <Content Include="gs9.02\lib\quit.ps" />
+    <Content Include="gs9.02\lib\ras1.upp" />
+    <Content Include="gs9.02\lib\ras24.upp" />
+    <Content Include="gs9.02\lib\ras3.upp" />
+    <Content Include="gs9.02\lib\ras32.upp" />
+    <Content Include="gs9.02\lib\ras4.upp" />
+    <Content Include="gs9.02\lib\ras8m.upp" />
+    <Content Include="gs9.02\lib\rinkj-2200-setup" />
+    <Content Include="gs9.02\lib\rollconv.ps" />
+    <Content Include="gs9.02\lib\showchar.ps" />
+    <Content Include="gs9.02\lib\showpage.ps" />
+    <Content Include="gs9.02\lib\st640ih.upp" />
+    <Content Include="gs9.02\lib\st640ihg.upp" />
+    <Content Include="gs9.02\lib\st640p.upp" />
+    <Content Include="gs9.02\lib\st640pg.upp" />
+    <Content Include="gs9.02\lib\st640pl.upp" />
+    <Content Include="gs9.02\lib\st640plg.upp" />
+    <Content Include="gs9.02\lib\stc.upp" />
+    <Content Include="gs9.02\lib\stc1520h.upp" />
+    <Content Include="gs9.02\lib\stc2.upp" />
+    <Content Include="gs9.02\lib\stc200_h.upp" />
+    <Content Include="gs9.02\lib\stc2s_h.upp" />
+    <Content Include="gs9.02\lib\stc2_h.upp" />
+    <Content Include="gs9.02\lib\stc300.upp" />
+    <Content Include="gs9.02\lib\stc300bl.upp" />
+    <Content Include="gs9.02\lib\stc300bm.upp" />
+    <Content Include="gs9.02\lib\stc500p.upp" />
+    <Content Include="gs9.02\lib\stc500ph.upp" />
+    <Content Include="gs9.02\lib\stc600ih.upp" />
+    <Content Include="gs9.02\lib\stc600p.upp" />
+    <Content Include="gs9.02\lib\stc600pl.upp" />
+    <Content Include="gs9.02\lib\stc640p.upp" />
+    <Content Include="gs9.02\lib\stc800ih.upp" />
+    <Content Include="gs9.02\lib\stc800p.upp" />
+    <Content Include="gs9.02\lib\stc800pl.upp" />
+    <Content Include="gs9.02\lib\stcany.upp" />
+    <Content Include="gs9.02\lib\stcany_h.upp" />
+    <Content Include="gs9.02\lib\stcinfo.ps" />
+    <Content Include="gs9.02\lib\stcolor.ps" />
+    <Content Include="gs9.02\lib\stc_h.upp" />
+    <Content Include="gs9.02\lib\stc_l.upp" />
+    <Content Include="gs9.02\lib\stocht.ps" />
+    <Content Include="gs9.02\lib\traceimg.ps" />
+    <Content Include="gs9.02\lib\traceop.ps" />
+    <Content Include="gs9.02\lib\type1enc.ps" />
+    <Content Include="gs9.02\lib\type1ops.ps" />
+    <Content Include="gs9.02\lib\uninfo.ps" />
+    <Content Include="gs9.02\lib\unix-lpr.sh" />
+    <Content Include="gs9.02\lib\unprot.ps" />
+    <Content Include="gs9.02\lib\viewcmyk.ps" />
+    <Content Include="gs9.02\lib\viewgif.ps" />
+    <Content Include="gs9.02\lib\viewjpeg.ps" />
+    <Content Include="gs9.02\lib\viewmiff.ps" />
+    <Content Include="gs9.02\lib\viewpbm.ps" />
+    <Content Include="gs9.02\lib\viewpcx.ps" />
+    <Content Include="gs9.02\lib\viewps2a.ps" />
+    <Content Include="gs9.02\lib\viewrgb.ps" />
+    <Content Include="gs9.02\lib\wftopfa" />
+    <Content Include="gs9.02\lib\wftopfa.ps" />
+    <Content Include="gs9.02\lib\winmaps.ps" />
+    <Content Include="gs9.02\lib\wmakebat.bat" />
+    <Content Include="gs9.02\lib\wrfont.ps" />
+    <Content Include="gs9.02\lib\zeroline.ps" />
+    <Content Include="RedMon\README.TXT" />
+    <Content Include="RedMon\redmonnt-x64.dll" />
+    <Content Include="RedMon\redmonnt.dll" />
+    <Content Include="RedMon\LICENCE" />
+    <Content Include="RedMon\redmon.hlp" />
+    <None Include="PrintPut_ClassDiagram.cd" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gs9.02\bin\gsdll32.dll" />
+    <Content Include="gs9.02\bin\gswin32.exe" />
+    <Content Include="gs9.02\bin\gswin32c.exe" />
+    <Content Include="gs9.02\lib\Fontmap.Sol" />
+    <Content Include="gs9.02\lib\ghostpdf.inf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

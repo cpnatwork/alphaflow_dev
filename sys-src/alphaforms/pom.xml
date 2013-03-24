@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>promed</groupId>
+		<artifactId>alphaconfigcore</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../alphaconfigcore</relativePath>
+	</parent>
+
+	<artifactId>alphaforms</artifactId>
+	<name>alpha-Forms</name>
+	
+	<description>alpha-Forms provides the means to create, edit and fill-in electronic forms based on active document mechanisms.</description>
+
+	<developers>
+		<developer>
+			<id>siflwagn</id>
+			<name>Florian Wagner</name>
+			<email>fwagner@me.com</email>
+			<url>http://flowagner.de</url>
+			<organization>ProMed</organization>
+			<organizationUrl>http://www6.informatik.uni-erlangen.de/research/projects/promed/index.ushtml
+			</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.dstovall</groupId>
+				<artifactId>onejar-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<configuration>
+							<mainClass>alpha.forms.startup.OneJarStartup</mainClass>
+							<!-- Optional -->
+							<onejarVersion>${lib.onejar.version}</onejarVersion>
+
+							<!-- Optional, default is false -->
+							<attachToBuild>true</attachToBuild>
+							<!-- Optional, default is "onejar" -->
+							<classifier>onejar</classifier>
+						</configuration>
+						<goals>
+							<goal>one-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
